@@ -32,9 +32,6 @@
 		D66BB0C12FB36B4800704582 = {
 			isa = PBXGroup;
 			children = (
-				D66BB0D82FB36B9E00704582 /* Models */,
-				D66BB0D92FB36BAF00704582 /* ViewModels */,
-				D66BB0DA2FB36BBC00704582 /* Views */,
 				D66BB0CC2FB36B4800704582 /* LocalGuide */,
 				D66BB0CB2FB36B4800704582 /* Products */,
 			);
@@ -46,27 +43,6 @@
 				D66BB0CA2FB36B4800704582 /* LocalGuide.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		D66BB0D82FB36B9E00704582 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		D66BB0D92FB36BAF00704582 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		D66BB0DA2FB36BBC00704582 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
