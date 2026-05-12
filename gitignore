@@ -1,0 +1,76 @@
+# ========================
+# Xcode
+# ========================
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcworkspace/xcshareddata/
+*.xcuserstate
+*.xcbkptlist
+DerivedData/
+build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Xcode Playground
+*.playground/timeline.xctimeline
+*.playground/playground.xcworkspace
+xcuserdata/
+
+# ========================
+# Swift Package Manager
+# ========================
+.build/
+.swiftpm/
+*.resolved
+
+# Packages (keep Package.resolved in git for reproducible builds)
+# Uncomment the next line if you want to ignore it:
+# Package.resolved
+
+# ========================
+# CocoaPods (if used)
+# ========================
+Pods/
+*.xcworkspace
+!default.xcworkspace
+Podfile.lock
+
+# ========================
+# Firebase
+# ========================
+# NEVER commit your Firebase config
+GoogleService-Info.plist
+
+# ========================
+# macOS
+# ========================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.TemporaryItems
+
+# ========================
+# Environment & Secrets
+# ========================
+*.env
+.env.local
+Secrets.swift
+Secrets.plist
+
+# ========================
+# Carthage (if used)
+# ========================
+Carthage/Build/
+
+# ========================
+# fastlane (if used)
+# ========================
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
