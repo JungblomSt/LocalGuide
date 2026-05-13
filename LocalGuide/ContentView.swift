@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  LocalGuide
 //
-//  Created by Stina Thun on 2026-05-12.
+//  Created by Group 4 on 2026-05-12.
 //
 
 import SwiftUI
