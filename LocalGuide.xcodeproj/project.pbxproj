@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D66BB0DF2FB3716200704582 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D66BB0DE2FB3716200704582 /* .gitignore */; };
 		D69E6DAF2FB5FB8D00A93146 /* AddGuidesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69E6DAE2FB5FB8D00A93146 /* AddGuidesView.swift */; };
 		D69E6DB32FB5FBC400A93146 /* AddGuidesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69E6DB22FB5FBC400A93146 /* AddGuidesViewModel.swift */; };
 		D69E6DB52FB5FC2500A93146 /* Guide.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69E6DB42FB5FC2500A93146 /* Guide.swift */; };
@@ -15,7 +14,6 @@
 
 /* Begin PBXFileReference section */
 		D66BB0CA2FB36B4800704582 /* LocalGuide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocalGuide.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D66BB0DE2FB3716200704582 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		D69E6DAE2FB5FB8D00A93146 /* AddGuidesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGuidesView.swift; sourceTree = "<group>"; };
 		D69E6DB22FB5FBC400A93146 /* AddGuidesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGuidesViewModel.swift; sourceTree = "<group>"; };
 		D69E6DB42FB5FC2500A93146 /* Guide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Guide.swift; sourceTree = "<group>"; };
@@ -48,7 +46,6 @@
 				D69E6DAD2FB5FB5B00A93146 /* Views */,
 				D66BB0CB2FB36B4800704582 /* Products */,
 				D66BB0CC2FB36B4800704582 /* LocalGuide */,
-				D66BB0DE2FB3716200704582 /* .gitignore */,
 			);
 			sourceTree = "<group>";
 		};
@@ -148,7 +145,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D66BB0DF2FB3716200704582 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
