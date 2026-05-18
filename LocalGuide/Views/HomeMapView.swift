@@ -35,6 +35,9 @@ struct HomeMapView: View {
             UserAnnotation()
         }
         .mapStyle(.hybrid)
+        .mapControls {
+            MapUserLocationButton()
+        }
         .onAppear {
             locationManager.requestLocationAccess()
         }
