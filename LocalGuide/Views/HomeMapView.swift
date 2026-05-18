@@ -5,13 +5,13 @@
 //  Created by Jimmy kroneld on 2026-05-15.
 //
 
-import SwiftUI
 import MapKit
+import SwiftUI
 
 struct HomeMapView: View {
-    
+
     @State private var locationManager = LocationManager()
-    
+
     // Centers the map on the user's location when available
     // If location is unavailable, the map falls back to a region centered over Sweden
     // Delta values control the fallback zoom level: higher values show a larger area
@@ -28,6 +28,7 @@ struct HomeMapView: View {
                 )
             )
         )
+
     )
 
     var body: some View {
@@ -40,6 +41,19 @@ struct HomeMapView: View {
         }
         .onAppear {
             locationManager.requestLocationAccess()
+        }
+        .onChange(of: locationManager.currentLocation) { _, newLocation in
+            guard let coordinate = newLocation?.coordinate else { return }
+
+            cameraPosition = .region(
+                MKCoordinateRegion(
+                    center: coordinate,
+                    span: MKCoordinateSpan(
+                        latitudeDelta: 0.02,
+                        longitudeDelta: 0.02
+                    )
+                )
+            )
         }
     }
 }
