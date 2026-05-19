@@ -33,11 +33,9 @@ struct HomeMapView: View {
             ForEach(guides) { guide in
                 Marker(guide.title, coordinate: guide.coordinates)
             }
-        }
-        .mapStyle(.hybrid)
             UserAnnotation()
         }
-  
+        .mapStyle(.hybrid)
         .mapControls {
             MapUserLocationButton()
         }
