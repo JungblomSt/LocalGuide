@@ -6,40 +6,73 @@ class GuideViewModel {
     var guides: [Guide] = [
         Guide(
             id: "1",
-            title: "Botaniska Trädgården",
-            description: "En av Europas största botaniska trädgårdar med fri entré. Perfekt för promenader i naturen mitt i staden.",
-            longitude: 11.950377,
-            latitude: 57.682853,
-            image: "https://www.botaniska.se/image.jpg"
+            title: "Gamla Stan, Stockholm",
+            description: "Stockholms medeltida gamla stad med kullerstensgator och färgglada byggnader.",
+            longitude: 18.0686,
+            latitude: 59.3233
         ),
         Guide(
             id: "2",
-            title: "Skansen Kronan",
-            description: "Historisk 1600-talsfästning på Skansberget med en av stadens bästa utsikter. Öppet dygnet runt.",
-            longitude: 11.955359,
-            latitude: 57.696059
+            title: "Liseberg, Göteborg",
+            description: "Skandinaviens mest besökta nöjespark mitt i Göteborg.",
+            longitude: 11.9925,
+            latitude: 57.6952
         ),
         Guide(
             id: "3",
-            title: "Liseberg",
-            description: "Skandinaviens mest besökta nöjespark med berg-och-dalbanor och underhållning för hela familjen.",
-            longitude: 11.992464,
-            latitude: 57.695219,
-            image: "https://www.liseberg.se/image.jpg"
+            title: "Turning Torso, Malmö",
+            description: "Skandinaviens högsta skyskrapa och ett ikoniskt landmärke i Malmö.",
+            longitude: 12.9921,
+            latitude: 55.6136
         ),
         Guide(
             id: "4",
-            title: "Universeum",
-            description: "Vetenskapsmuseum med tropisk regnskog, akvarium och interaktiva utställningar. Öppet 10–18 varje dag.",
-            longitude: 11.988530,
-            latitude: 57.695768
+            title: "Visby ringmur, Gotland",
+            description: "Välbevarad medeltida stadsmur från 1200-talet, ett UNESCO-världsarv.",
+            longitude: 18.2948,
+            latitude: 57.6389
         ),
         Guide(
             id: "5",
-            title: "Trädgårdsföreningen",
-            description: "Vacker stadspark från 1842 med rosor, palmhus och café. Öppet 07–20 dagligen.",
-            longitude: 11.976402,
-            latitude: 57.706358
+            title: "Icehotel, Jukkasjärvi",
+            description: "Världens första ishotell, byggt varje vinter av is och snö från Torne älv.",
+            longitude: 20.6579,
+            latitude: 67.8557
+        ),
+        Guide(
+            id: "6",
+            title: "Kullaberg, Skåne",
+            description: "Dramatisk klippkust med naturreservat, fyrar och fantastisk utsikt över Öresund.",
+            longitude: 12.4500,
+            latitude: 56.3000
+        ),
+        Guide(
+            id: "7",
+            title: "Åre, Jämtland",
+            description: "Sveriges populäraste skidort med alpina pister och Sveriges högsta restaurang.",
+            longitude: 13.0821,
+            latitude: 63.3986
+        ),
+        Guide(
+            id: "8",
+            title: "Abisko nationalpark, Lappland",
+            description: "En av Sveriges vackraste nationalparker med norrskensvisningar och midnattssol.",
+            longitude: 18.7726,
+            latitude: 68.3496
+        ),
+        Guide(
+            id: "9",
+            title: "Vadstena slott",
+            description: "Praktfullt renässansslott vid Vätterns strand, byggt på 1500-talet av Gustav Vasa.",
+            longitude: 14.8921,
+            latitude: 58.4486
+        ),
+        Guide(
+            id: "10",
+            title: "Höga Kusten, Västernorrland",
+            description: "UNESCO-världsarv med dramatiska klippor, djupa fjordar och unik natur.",
+            longitude: 18.1500,
+            latitude: 62.8000
         )
     ]
 }

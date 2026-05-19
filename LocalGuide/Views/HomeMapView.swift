@@ -9,6 +9,7 @@ import SwiftUI
 import MapKit
 
 struct HomeMapView: View {
+    var guides: [Guide]
     // Initial map region centered over Sweden
     // Latitude and longitude set the center point of the map
     // Delta values control the zoom level: higher values show a larger area
@@ -26,11 +27,23 @@ struct HomeMapView: View {
     )
 
     var body: some View {
-        Map(position: $cameraPosition)
-            .mapStyle(.hybrid)
+        Map(position: $cameraPosition) {
+            ForEach(guides) { guide in
+                Marker(guide.title, coordinate: guide.coordinates)
+            }
+        }
+        .mapStyle(.hybrid)
     }
 }
 
 #Preview {
-    HomeMapView()
+    HomeMapView(guides: [
+        Guide(
+            id: "1",
+            title: "Liseberg",
+            description: "Nöjespark",
+            longitude: 11.992464,
+            latitude: 57.695219
+        )
+    ])
 }
