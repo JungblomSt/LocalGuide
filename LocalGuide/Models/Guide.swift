@@ -16,7 +16,7 @@ class Guide: Identifiable {
     }
     
     init (id: String, title: String, description: String, longitude: Double, latitude: Double, image: String? = nil) {
-        self.id = UUID()
+        self.id = UUID(uuidString: id) ?? UUID ()
         self.title = title
         self.description = description
         self.longitude = longitude

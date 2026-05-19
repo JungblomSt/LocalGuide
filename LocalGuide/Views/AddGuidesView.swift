@@ -12,6 +12,7 @@ import SwiftUI
 struct AddGuidesView: View {
     
     @State private var viewModel = AddGuideViewModel()
+    @State private var showPublishedAlert: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -35,6 +36,10 @@ struct AddGuidesView: View {
     private var titleInput: some View {
         Section {
             TextField("Vad heter/kallas den här platsen?", text: $viewModel.title)
+            if let error = viewModel.titleError {
+                Text(error)
+                    .foregroundStyle(Color.red)
+            }
         } header: {
             Text("Titel")
         }
@@ -50,6 +55,11 @@ struct AddGuidesView: View {
                 axis: .vertical
             )
             .lineLimit(3...6)
+            
+            if let error = viewModel.descriptionError {
+                Text(error)
+                    .foregroundStyle(Color.red)
+            }
         } header: {
             Text("Beskrivning")
         }
@@ -60,13 +70,22 @@ struct AddGuidesView: View {
     private var uploadButton: some View {
         Section {
             Button {
-                viewModel.saveGuide()
+                if viewModel.validate() {
+                    viewModel.saveGuide()
+                    viewModel.reset()
+                    showPublishedAlert = true
+                }
             } label: {
                 HStack {
                     Spacer()
                     Text("Publisera")
                     Spacer()
                 }
+            }
+            .alert("Guide publicerad! ", isPresented: $showPublishedAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("\(viewModel.title) har lagts till på kartan.") // TODO: visa hur guiden ser ut antingen i listan eller när man klickat på pinnen
             }
         }
     }
