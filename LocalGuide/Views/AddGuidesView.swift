@@ -60,13 +60,17 @@ struct AddGuidesView: View {
                     locationManager.requestLocationAccess()
                     if let coordinate = locationManager.currentLocation?.coordinate {
                         viewModel.tempLocation = coordinate
+                        // move stuff from here to the viewmodel
+                        // and add validation requariments to create.
                     }
                 } label: {
                     Label("Nuvarande plats", systemImage: "location.fill")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-
+                // ui improvement
+                // somehow disable if gps permision is off.
+                
                 Button {
                     showMapPicker = true
                 } label: {
@@ -135,6 +139,7 @@ struct AddGuidesView: View {
 // MARK: - Map picker
 
  // for now placing it here
+// if gps permission on. make it show much closer to user (unsore correct based on permission off currently)
 struct MapLocationPickerView: View {
     @Binding var selectedLocation: CLLocationCoordinate2D?
     @Environment(\.dismiss) private var dismiss
