@@ -10,20 +10,15 @@ import CoreLocation
 
 
 struct GuideListView: View {
-    
-    @State private var locationManager = LocationManager()
-    
-   
-    
+
+    private let userLocation = CLLocation(latitude: 59.3293, longitude: 18.0686)
+
     private var sortedGuides: [Guide] {
-            guard let userLocation = locationManager.currentLocation else {
-                return Guide.sampleData     // not located yet — show unsorted
-            }
-            return Guide.sampleData.sorted {
-                $0.distance(from: userLocation) < $1.distance(from: userLocation)
-            }
+        Guide.sampleData.sorted {
+            $0.distance(from: userLocation) < $1.distance(from: userLocation)
         }
-    
+    }
+
     var body: some View {
         NavigationStack {
             List(sortedGuides) { guide in
@@ -33,18 +28,13 @@ struct GuideListView: View {
                     Text(guide.description)
                         .font(.subheadline)
                         .lineLimit(2)
-                    if let userLocation = locationManager.currentLocation {
-                        Text("\(guide.distance(from: userLocation) / 1000, specifier: "%.2f") km bort")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+                    Text("\(guide.distance(from: userLocation) / 1000, specifier: "%.2f") km bort")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
                 .padding()
             }
             .navigationTitle(Text("Nära mig"))
-            .onAppear {
-                locationManager.requestLocationAccess()
-            }
         }
     }
 }
