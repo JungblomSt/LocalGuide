@@ -20,7 +20,7 @@ struct AddGuidesView: View {
                 Form {
                     titleInput
 //                    locationSelection
-//                    categorySelection
+                    categorySelection
 //                    audioSelection
 //                    imageSelection
                     descriptionInput
@@ -42,6 +42,17 @@ struct AddGuidesView: View {
             }
         } header: {
             Text("Titel")
+        }
+    }
+    
+    private var categorySelection: some View {
+        Section {
+            Picker("Kategori:", selection: $viewModel.category) {
+                ForEach(Category.allCases) { category in
+                    Text(category.displayName).tag(category)
+                }
+            }
+            .pickerStyle(.automatic)
         }
     }
     
