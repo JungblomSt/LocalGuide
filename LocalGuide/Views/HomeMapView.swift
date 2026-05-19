@@ -5,11 +5,12 @@
 //  Created by Jimmy kroneld on 2026-05-15.
 //
 
-import SwiftUI
 import MapKit
+import SwiftUI
 
 struct HomeMapView: View {
-    var guides: [Guide]
+  @State private var locationManager = LocationManager()  
+  var guides: [Guide]
     // Initial map region centered over Sweden
     // Latitude and longitude set the center point of the map
     // Delta values control the zoom level: higher values show a larger area
@@ -24,6 +25,7 @@ struct HomeMapView: View {
                 longitudeDelta: 9
             )
         )
+
     )
 
     var body: some View {
@@ -33,6 +35,28 @@ struct HomeMapView: View {
             }
         }
         .mapStyle(.hybrid)
+            UserAnnotation()
+        }
+  
+        .mapControls {
+            MapUserLocationButton()
+        }
+        .onAppear {
+            locationManager.requestLocationAccess()
+        }
+        .onChange(of: locationManager.currentLocation) { _, newLocation in
+            guard let coordinate = newLocation?.coordinate else { return }
+
+            cameraPosition = .region(
+                MKCoordinateRegion(
+                    center: coordinate,
+                    span: MKCoordinateSpan(
+                        latitudeDelta: 0.02,
+                        longitudeDelta: 0.02
+                    )
+                )
+            )
+        }
     }
 }
 
