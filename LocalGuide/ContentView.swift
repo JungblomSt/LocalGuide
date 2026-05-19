@@ -8,15 +8,23 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var viewModel = GuideViewModel()
+    
     var body: some View {
-        HomeMapView()
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            Tab("Karta", systemImage: "map") {
+                HomeMapView(guides: viewModel.guides)
+            }
+            Tab("Lägg till", systemImage: "plus") {
+                AddGuidesView()
+            }
+            Tab("Lista", systemImage: "list.bullet") {
+                
+            }
+            Tab("Profil", systemImage: "person") {
+                
+            }
         }
-        .padding()
     }
 }
 
