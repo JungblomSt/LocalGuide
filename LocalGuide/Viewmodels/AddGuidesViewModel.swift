@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 import Observation
 
 
@@ -13,9 +14,10 @@ import Observation
 class AddGuideViewModel {
     var title: String = ""
     var description: String = ""
+    var tempLocation: CLLocationCoordinate2D?
 //    var isUploading: Bool = false
 //    var error: Error?
-    
+
     var titleError: String? = nil
     var descriptionError: String? = nil
     
@@ -29,6 +31,7 @@ class AddGuideViewModel {
     func reset() {
         title = ""
         description = ""
+        tempLocation = nil
         titleError = nil
         descriptionError = nil
     }
