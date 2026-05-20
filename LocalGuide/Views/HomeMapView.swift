@@ -9,7 +9,8 @@ import MapKit
 import SwiftUI
 
 struct HomeMapView: View {
-  @State private var locationManager = LocationManager()  
+  @State private var locationManager = LocationManager()
+    
   var guides: [Guide]
     // Initial map region centered over Sweden
     // Latitude and longitude set the center point of the map
@@ -36,8 +37,23 @@ struct HomeMapView: View {
             UserAnnotation()
         }
         .mapStyle(.hybrid)
-        .mapControls {
-            MapUserLocationButton()
+        .overlay(alignment: .bottomTrailing) {
+            Button {
+                locationManager.requestLocationAccess()
+            } label: {
+                Image(systemName: "location.fill")
+                    .font(.title2)
+                    .foregroundColor(.blue)
+                    .padding()
+                    .background(.thinMaterial)
+                    .clipShape(Circle())
+                    .overlay {
+                        Circle()
+                            .stroke(.blue, lineWidth: 2)
+                    }
+                    .shadow(radius: 4)
+            }
+            .padding()
         }
         .onAppear {
             locationManager.requestLocationAccess()
