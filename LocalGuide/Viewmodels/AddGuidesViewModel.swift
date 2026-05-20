@@ -18,11 +18,20 @@ class AddGuideViewModel {
 //    var isUploading: Bool = false
 //    var error: Error?
 
+    let locationManager = LocationManager()
+
     var titleError: String? = nil
     var descriptionError: String? = nil
-    
+
     var isValid: Bool {
         titleError == nil && descriptionError == nil
+    }
+
+    func useCurrentLocation() {
+        locationManager.requestLocationAccess()
+        if let coordinate = locationManager.currentLocation?.coordinate {
+            tempLocation = coordinate
+        }
     }
     
     func saveGuide() {

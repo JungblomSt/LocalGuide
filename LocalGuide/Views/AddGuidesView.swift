@@ -13,7 +13,6 @@ import MapKit
 struct AddGuidesView: View {
 
     @State private var viewModel = AddGuideViewModel()
-    @State private var locationManager = LocationManager()
     @State private var showPublishedAlert: Bool = false
     @State private var showMapPicker: Bool = false
 
@@ -57,12 +56,7 @@ struct AddGuidesView: View {
         Section {
             HStack(spacing: 12) {
                 Button {
-                    locationManager.requestLocationAccess()
-                    if let coordinate = locationManager.currentLocation?.coordinate {
-                        viewModel.tempLocation = coordinate
-                        // move stuff from here to the viewmodel
-                        // and add validation requariments to create.
-                    }
+                    viewModel.useCurrentLocation()
                 } label: {
                     Label("Nuvarande plats", systemImage: "location.fill")
                         .frame(maxWidth: .infinity)
@@ -70,7 +64,7 @@ struct AddGuidesView: View {
                 .buttonStyle(.bordered)
                 // ui improvement
                 // somehow disable if gps permision is off.
-                
+
                 Button {
                     showMapPicker = true
                 } label: {
