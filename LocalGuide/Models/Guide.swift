@@ -3,10 +3,10 @@
 import Foundation
 import MapKit
 
-struct Guide: Identifiable {
+struct Guide: Identifiable, Hashable {
     var id: UUID
     var title: String
-    var city: String?
+    var city: String
     var category: String
     var description: String
     var longitude: Double
@@ -18,10 +18,10 @@ struct Guide: Identifiable {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
     
-    init (id: String, title: String, city: String? = nil,category: String, description: String, longitude: Double, latitude: Double, image: String? = nil, audioURL: String? = nil) {
+    init (id: String, title: String, city: String, category: String, description: String, longitude: Double, latitude: Double, image: String? = nil, audioURL: String? = nil) {
         self.id = UUID(uuidString: id) ?? UUID ()
         self.title = title
-        self.city = nil
+        self.city = city
         self.category = category
         self.description = description
         self.longitude = longitude
@@ -65,16 +65,17 @@ extension Guide{
     static let sampleData: [Guide] = [
         Guide(
             id: "1",
-            title: "Gamla Stan, Stockholm",
+            title: "Gamla Stan",
             city: "Stockholm",
             category: "history",
-            description: "Stockholms medeltida gamla stad med kullerstensgator och färgglada byggnader.",
+            description: "Gamla Stan är hjärtat av Stockholm och en av Europas bäst bevarade medeltidsstäder. \n Gamla Stan är hjärtat av Stockholm och en av Europas bäst bevarade medeltidsstäder. Kullerstensgatorna, de färgglada fasaderna och de smala gränderna skapar en unik atmosfär. Här finns Kungliga slottet, Storkyrkan och Stortorget – platser som vittnar om mer än sju hundra år av svensk historia. Längs Österlånggatan hittar man caféer, restauranger och konstgallerier. En promenad längs Skeppsbron ger en storslagen vy över vattnet som omger ön på alla sidor.",
             longitude: 18.0686,
-            latitude: 59.3233
+            latitude: 59.3233,
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Gamla_stan_bank.jpg/1280px-Gamla_stan_bank.jpg"
         ),
         Guide(
             id: "2",
-            title: "Liseberg, Göteborg",
+            title: "Liseberg",
             city: "Göteborg",
             category: "kids",
             description: "Skandinaviens mest besökta nöjespark mitt i Göteborg.",
@@ -83,7 +84,7 @@ extension Guide{
         ),
         Guide(
             id: "3",
-            title: "Turning Torso, Malmö",
+            title: "Turning Torso",
             city: "Malmö",
             category: "art",
             description: "Skandinaviens högsta skyskrapa och ett ikoniskt landmärke i Malmö.",
@@ -92,7 +93,7 @@ extension Guide{
         ),
         Guide(
             id: "4",
-            title: "Visby ringmur, Gotland",
+            title: "Visby ringmur",
             city: "Visby",
             category: "history",
             description: "Välbevarad medeltida stadsmur från 1200-talet, ett UNESCO-världsarv.",
@@ -101,7 +102,7 @@ extension Guide{
         ),
         Guide(
             id: "5",
-            title: "Icehotel, Jukkasjärvi",
+            title: "Icehotel",
             city: "Jukkasjärvi",
             category: "other",
             description: "Världens första ishotell, byggt varje vinter av is och snö från Torne älv.",
@@ -110,7 +111,7 @@ extension Guide{
         ),
         Guide(
             id: "6",
-            title: "Kullaberg, Skåne",
+            title: "Kullaberg",
             city: "Kullabygden",
             category: "nature",
             description: "Dramatisk klippkust med naturreservat, fyrar och fantastisk utsikt över Öresund.",
@@ -119,7 +120,7 @@ extension Guide{
         ),
         Guide(
             id: "7",
-            title: "Åre, Jämtland",
+            title: "Åre",
             city: "Åre",
             category: "sports",
             description: "Sveriges populäraste skidort med alpina pister och Sveriges högsta restaurang.",
@@ -128,7 +129,7 @@ extension Guide{
         ),
         Guide(
             id: "8",
-            title: "Abisko nationalpark, Lappland",
+            title: "Abisko nationalpark",
             city: "Abisko",
             category: "nature",
             description: "En av Sveriges vackraste nationalparker med norrskensvisningar och midnattssol.",
@@ -146,7 +147,7 @@ extension Guide{
         ),
         Guide(
             id: "10",
-            title: "Höga Kusten, Västernorrland",
+            title: "Höga Kusten",
             city: "Kramfors",
             category: "nature",
             description: "UNESCO-världsarv med dramatiska klippor, djupa fjordar och unik natur.",
