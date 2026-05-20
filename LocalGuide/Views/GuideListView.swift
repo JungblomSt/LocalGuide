@@ -22,17 +22,26 @@ struct GuideListView: View {
     var body: some View {
         NavigationStack {
             List(sortedGuides) { guide in
-                VStack(alignment: .leading) {
-                    Text(guide.title)
+                NavigationLink {
+                    GuideDetailView(guide: guide)
+                } label: {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text(guide.title)
+                            Spacer()
+                            Text(guide.city)
+                            Spacer()
+                        }
                         .font(.headline)
-                    Text(guide.description)
-                        .font(.subheadline)
-                        .lineLimit(2)
-                    Text("\(guide.distance(from: userLocation) / 1000, specifier: "%.2f") km bort")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        Text(guide.description)
+                            .font(.subheadline)
+                            .lineLimit(2)
+                        Text("\(guide.distance(from: userLocation) / 1000, specifier: "%.2f") km bort")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding()
                 }
-                .padding()
             }
             .navigationTitle(Text("Nära mig"))
         }
