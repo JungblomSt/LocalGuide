@@ -63,6 +63,7 @@ struct HomeMapView: View {
         Guide(
             id: "1",
             title: "Liseberg",
+            category: "kids",
             description: "Nöjespark",
             longitude: 11.992464,
             latitude: 57.695219

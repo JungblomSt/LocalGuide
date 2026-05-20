@@ -8,18 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var viewModel = GuideViewModel()
-    
     var body: some View {
         TabView {
             Tab("Karta", systemImage: "map") {
-                HomeMapView(guides: viewModel.guides)
+                HomeMapView(guides: Guide.sampleData)
             }
             Tab("Lägg till", systemImage: "plus") {
                 AddGuidesView()
             }
             Tab("Lista", systemImage: "list.bullet") {
-                
+                GuideListView()
             }
             Tab("Profil", systemImage: "person") {
                 

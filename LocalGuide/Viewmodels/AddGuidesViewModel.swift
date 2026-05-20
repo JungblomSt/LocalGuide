@@ -20,6 +20,8 @@ class AddGuideViewModel {
 
     let locationManager = LocationManager()
 
+    var category: Category = .other
+    
     var titleError: String? = nil
     var descriptionError: String? = nil
     var locationError: String? = nil
@@ -37,11 +39,17 @@ class AddGuideViewModel {
     
     func saveGuide() {
         
+        
+        // TODO: This
+        
+        
     }
+    
     func reset() {
         title = ""
         description = ""
         tempLocation = nil
+        category = .other
         titleError = nil
         descriptionError = nil
         locationError = nil
