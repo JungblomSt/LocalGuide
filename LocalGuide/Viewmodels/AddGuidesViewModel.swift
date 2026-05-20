@@ -12,6 +12,7 @@ import Observation
 @Observable
 class AddGuideViewModel {
     var title: String = ""
+    var city: String = ""
     var description: String = ""
     var category: Category = .other
     
@@ -33,6 +34,7 @@ class AddGuideViewModel {
     func reset() {
         title = ""
         description = ""
+        city = ""
         category = .other
         titleError = nil
         descriptionError = nil
@@ -47,7 +49,7 @@ class AddGuideViewModel {
     }
     
     func validate() -> Bool {
-        titleError = validateTextField(title, maxLength: 50)
+        titleError = validateTextField(title, maxLength: 58)
         descriptionError = validateTextField(description, maxLength: 1000)
         return isValid
     }

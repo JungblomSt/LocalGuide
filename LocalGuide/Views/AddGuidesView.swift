@@ -19,6 +19,7 @@ struct AddGuidesView: View {
             ZStack{
                 Form {
                     titleInput
+                    cityInput
 //                    locationSelection
                     categorySelection
 //                    audioSelection
@@ -42,6 +43,18 @@ struct AddGuidesView: View {
             }
         } header: {
             Text("Titel")
+        }
+    }
+    
+    private var cityInput: some View {
+        Section {
+            TextField("Vilken stad ligger platsen i?", text: $viewModel.city)
+            if let error = viewModel.titleError {
+                Text(error)
+                    .foregroundStyle(Color.red)
+            }
+        } header: {
+            Text("Stad")
         }
     }
     
