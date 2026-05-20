@@ -9,7 +9,8 @@ import MapKit
 import SwiftUI
 
 struct HomeMapView: View {
-  @State private var locationManager = LocationManager()
+    @State private var locationManager = LocationManager()
+    @State private var showLocationDeniedAlert = false
 
   var guides: [Guide]
     // Initial map region centered over Sweden
@@ -55,6 +56,17 @@ struct HomeMapView: View {
             }
             .padding()
         }
+        .alert("Platsåtkomst är avstängd", isPresented: $showLocationDeniedAlert) {
+            Button("Öppna inställningar") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+
+            Button("Avbryt", role: .cancel) { }
+        } message: {
+            Text("Aktivera platsåtkomst för LocalGuide i Inställningar för att kunna centrera kartan på din position.")
+        }
         .onAppear {
             locationManager.requestLocationAccess()
         }
@@ -74,6 +86,10 @@ struct HomeMapView: View {
     }
     
     private func handleLocationButtonTap() {
+        if locationManager.isLocationDenied {
+            showLocationDeniedAlert = true
+            return
+        }
         if let coordinate = locationManager.currentLocation?.coordinate {
             cameraPosition = .region(
                 MKCoordinateRegion(
