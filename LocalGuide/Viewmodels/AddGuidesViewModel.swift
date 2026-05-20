@@ -13,8 +13,7 @@ import Observation
 class AddGuideViewModel {
     var title: String = ""
     var description: String = ""
-//    var isUploading: Bool = false
-//    var error: Error?
+    var category: Category = .other
     
     var titleError: String? = nil
     var descriptionError: String? = nil
@@ -25,10 +24,16 @@ class AddGuideViewModel {
     
     func saveGuide() {
         
+        
+        // TODO: This
+        
+        
     }
+    
     func reset() {
         title = ""
         description = ""
+        category = .other
         titleError = nil
         descriptionError = nil
     }
