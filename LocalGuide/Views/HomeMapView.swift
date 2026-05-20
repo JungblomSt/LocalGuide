@@ -10,7 +10,7 @@ import SwiftUI
 
 struct HomeMapView: View {
   @State private var locationManager = LocationManager()
-    
+
   var guides: [Guide]
     // Initial map region centered over Sweden
     // Latitude and longitude set the center point of the map
@@ -39,7 +39,7 @@ struct HomeMapView: View {
         .mapStyle(.hybrid)
         .overlay(alignment: .bottomTrailing) {
             Button {
-                locationManager.requestLocationAccess()
+                handleLocationButtonTap()
             } label: {
                 Image(systemName: "location.fill")
                     .font(.title2)
@@ -70,6 +70,22 @@ struct HomeMapView: View {
                     )
                 )
             )
+        }
+    }
+    
+    private func handleLocationButtonTap() {
+        if let coordinate = locationManager.currentLocation?.coordinate {
+            cameraPosition = .region(
+                MKCoordinateRegion(
+                    center: coordinate,
+                    span: MKCoordinateSpan(
+                        latitudeDelta: 0.02,
+                        longitudeDelta: 0.02
+                    )
+                )
+            )
+        } else {
+            locationManager.requestLocationAccess()
         }
     }
 }
