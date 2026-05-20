@@ -22,9 +22,10 @@ class AddGuideViewModel {
 
     var titleError: String? = nil
     var descriptionError: String? = nil
+    var locationError: String? = nil
 
     var isValid: Bool {
-        titleError == nil && descriptionError == nil
+        titleError == nil && descriptionError == nil && locationError == nil
     }
 
     func useCurrentLocation() {
@@ -43,6 +44,7 @@ class AddGuideViewModel {
         tempLocation = nil
         titleError = nil
         descriptionError = nil
+        locationError = nil
     }
     
     func validateTextField(_ text: String, maxLength: Int) -> String? {
@@ -53,9 +55,15 @@ class AddGuideViewModel {
         return nil
     }
     
+    func validateLocation(_ location: CLLocationCoordinate2D?) -> String? {
+        if location == nil { return "* Välj en plats." }
+        return nil
+    }
+
     func validate() -> Bool {
         titleError = validateTextField(title, maxLength: 50)
         descriptionError = validateTextField(description, maxLength: 1000)
+        locationError = validateLocation(tempLocation)
         return isValid
     }
     

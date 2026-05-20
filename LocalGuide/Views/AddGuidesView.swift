@@ -79,6 +79,10 @@ struct AddGuidesView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            if let error = viewModel.locationError {
+                Text(error)
+                    .foregroundStyle(Color.red)
+            }
         } header: {
             Text("Plats")
         }
