@@ -73,6 +73,10 @@ struct HomeMapView: View {
             GuideDetailView(guide: guide)
             
         }
+        .sheet(item: $selectedGuide) {guide in
+            GuideDetailView(guide: guide)
+            
+        }
         .onAppear {
             locationManager.requestLocationAccess()
         }
