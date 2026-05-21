@@ -22,6 +22,7 @@ class AddGuideViewModel {
     var category: Category = .other
     
     var titleError: String? = nil
+    var cityError: String? = nil
     var descriptionError: String? = nil
     var locationError: String? = nil
 
@@ -69,7 +70,8 @@ class AddGuideViewModel {
     }
 
     func validate() -> Bool {
-        titleError = validateTextField(title, maxLength: 58)
+        titleError = validateTextField(title, maxLength: 30)
+        cityError = validateTextField(city, maxLength: 58)
         descriptionError = validateTextField(description, maxLength: 1000)
         locationError = validateLocation(tempLocation)
         return isValid

@@ -11,8 +11,10 @@ import SwiftUI
 struct HomeMapView: View {
     @State private var locationManager = LocationManager()
     @State private var showLocationDeniedAlert = false
-
-  var guides: [Guide]
+    @State private var selectedGuide: Guide?
+    
+    var guides: [Guide]
+    
     // Initial map region centered over Sweden
     // Latitude and longitude set the center point of the map
     // Delta values control the zoom level: higher values show a larger area
@@ -27,13 +29,13 @@ struct HomeMapView: View {
                 longitudeDelta: 9
             )
         )
-
     )
-
+    
     var body: some View {
-        Map(position: $cameraPosition) {
+        Map(position: $cameraPosition, selection: $selectedGuide) {
             ForEach(guides) { guide in
                 Marker(guide.title, coordinate: guide.coordinates)
+                    .tag(guide)
             }
             UserAnnotation()
         }
@@ -62,17 +64,21 @@ struct HomeMapView: View {
                     UIApplication.shared.open(url)
                 }
             }
-
+            
             Button("Avbryt", role: .cancel) { }
         } message: {
             Text("Aktivera platsåtkomst för LocalGuide i Inställningar för att kunna centrera kartan på din position.")
+        }
+        .sheet(item: $selectedGuide) {guide in
+            GuideDetailView(guide: guide)
+            
         }
         .onAppear {
             locationManager.requestLocationAccess()
         }
         .onChange(of: locationManager.currentLocation) { _, newLocation in
             guard let coordinate = newLocation?.coordinate else { return }
-
+            
             cameraPosition = .region(
                 MKCoordinateRegion(
                     center: coordinate,
@@ -107,14 +113,5 @@ struct HomeMapView: View {
 }
 
 #Preview {
-    HomeMapView(guides: [
-        Guide(
-            id: "1",
-            title: "Liseberg",
-            category: "kids",
-            description: "Nöjespark",
-            longitude: 11.992464,
-            latitude: 57.695219
-        )
-    ])
+    HomeMapView(guides: Guide.sampleData)
 }

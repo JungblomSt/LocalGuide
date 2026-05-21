@@ -53,7 +53,7 @@ struct AddGuidesView: View {
     private var cityInput: some View {
         Section {
             TextField("Vilken stad ligger platsen i?", text: $viewModel.city)
-            if let error = viewModel.titleError {
+            if let error = viewModel.cityError {
                 Text(error)
                     .foregroundStyle(Color.red)
             }
