@@ -6,6 +6,7 @@ import MapKit
 struct Guide: Identifiable {
     var id: UUID
     var title: String
+    var city: String?
     var category: String
     var description: String
     var longitude: Double
@@ -17,9 +18,10 @@ struct Guide: Identifiable {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
     
-    init (id: String, title: String, category: String, description: String, longitude: Double, latitude: Double, image: String? = nil, audioURL: String? = nil) {
+    init (id: String, title: String, city: String? = nil,category: String, description: String, longitude: Double, latitude: Double, image: String? = nil, audioURL: String? = nil) {
         self.id = UUID(uuidString: id) ?? UUID ()
         self.title = title
+        self.city = nil
         self.category = category
         self.description = description
         self.longitude = longitude
@@ -64,6 +66,7 @@ extension Guide{
         Guide(
             id: "1",
             title: "Gamla Stan, Stockholm",
+            city: "Stockholm",
             category: "history",
             description: "Stockholms medeltida gamla stad med kullerstensgator och färgglada byggnader.",
             longitude: 18.0686,
@@ -72,6 +75,7 @@ extension Guide{
         Guide(
             id: "2",
             title: "Liseberg, Göteborg",
+            city: "Göteborg",
             category: "kids",
             description: "Skandinaviens mest besökta nöjespark mitt i Göteborg.",
             longitude: 11.9925,
@@ -80,6 +84,7 @@ extension Guide{
         Guide(
             id: "3",
             title: "Turning Torso, Malmö",
+            city: "Malmö",
             category: "art",
             description: "Skandinaviens högsta skyskrapa och ett ikoniskt landmärke i Malmö.",
             longitude: 12.9921,
@@ -88,6 +93,7 @@ extension Guide{
         Guide(
             id: "4",
             title: "Visby ringmur, Gotland",
+            city: "Visby",
             category: "history",
             description: "Välbevarad medeltida stadsmur från 1200-talet, ett UNESCO-världsarv.",
             longitude: 18.2948,
@@ -96,6 +102,7 @@ extension Guide{
         Guide(
             id: "5",
             title: "Icehotel, Jukkasjärvi",
+            city: "Jukkasjärvi",
             category: "other",
             description: "Världens första ishotell, byggt varje vinter av is och snö från Torne älv.",
             longitude: 20.6579,
@@ -104,6 +111,7 @@ extension Guide{
         Guide(
             id: "6",
             title: "Kullaberg, Skåne",
+            city: "Kullabygden",
             category: "nature",
             description: "Dramatisk klippkust med naturreservat, fyrar och fantastisk utsikt över Öresund.",
             longitude: 12.4500,
@@ -112,6 +120,7 @@ extension Guide{
         Guide(
             id: "7",
             title: "Åre, Jämtland",
+            city: "Åre",
             category: "sports",
             description: "Sveriges populäraste skidort med alpina pister och Sveriges högsta restaurang.",
             longitude: 13.0821,
@@ -120,6 +129,7 @@ extension Guide{
         Guide(
             id: "8",
             title: "Abisko nationalpark, Lappland",
+            city: "Abisko",
             category: "nature",
             description: "En av Sveriges vackraste nationalparker med norrskensvisningar och midnattssol.",
             longitude: 18.7726,
@@ -128,6 +138,7 @@ extension Guide{
         Guide(
             id: "9",
             title: "Vadstena slott",
+            city: "Vadstena",
             category: "history",
             description: "Praktfullt renässansslott vid Vätterns strand, byggt på 1500-talet av Gustav Vasa.",
             longitude: 14.8921,
@@ -136,6 +147,7 @@ extension Guide{
         Guide(
             id: "10",
             title: "Höga Kusten, Västernorrland",
+            city: "Kramfors",
             category: "nature",
             description: "UNESCO-världsarv med dramatiska klippor, djupa fjordar och unik natur.",
             longitude: 18.1500,
