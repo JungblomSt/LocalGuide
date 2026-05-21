@@ -20,6 +20,11 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
     /// Stores the user's latest known location.
     var currentLocation: CLLocation?
     
+    /// Returns true if the user has denied location access or if access is restricted
+    var isLocationDenied: Bool {
+        authorizationStatus == .denied || authorizationStatus == .restricted
+    }
+    
     override init() {
         super.init()
         manager.delegate = self

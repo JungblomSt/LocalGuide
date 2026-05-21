@@ -9,7 +9,9 @@ import MapKit
 import SwiftUI
 
 struct HomeMapView: View {
-  @State private var locationManager = LocationManager()  
+    @State private var locationManager = LocationManager()
+    @State private var showLocationDeniedAlert = false
+
   var guides: [Guide]
     // Initial map region centered over Sweden
     // Latitude and longitude set the center point of the map
@@ -36,8 +38,34 @@ struct HomeMapView: View {
             UserAnnotation()
         }
         .mapStyle(.hybrid)
-        .mapControls {
-            MapUserLocationButton()
+        .overlay(alignment: .bottomTrailing) {
+            Button {
+                handleLocationButtonTap()
+            } label: {
+                Image(systemName: "location.fill")
+                    .font(.title2)
+                    .foregroundColor(.blue)
+                    .padding()
+                    .background(.thinMaterial)
+                    .clipShape(Circle())
+                    .overlay {
+                        Circle()
+                            .stroke(.blue, lineWidth: 2)
+                    }
+                    .shadow(radius: 4)
+            }
+            .padding()
+        }
+        .alert("Platsåtkomst är avstängd", isPresented: $showLocationDeniedAlert) {
+            Button("Öppna inställningar") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+
+            Button("Avbryt", role: .cancel) { }
+        } message: {
+            Text("Aktivera platsåtkomst för LocalGuide i Inställningar för att kunna centrera kartan på din position.")
         }
         .onAppear {
             locationManager.requestLocationAccess()
@@ -54,6 +82,26 @@ struct HomeMapView: View {
                     )
                 )
             )
+        }
+    }
+    
+    private func handleLocationButtonTap() {
+        if locationManager.isLocationDenied {
+            showLocationDeniedAlert = true
+            return
+        }
+        if let coordinate = locationManager.currentLocation?.coordinate {
+            cameraPosition = .region(
+                MKCoordinateRegion(
+                    center: coordinate,
+                    span: MKCoordinateSpan(
+                        latitudeDelta: 0.02,
+                        longitudeDelta: 0.02
+                    )
+                )
+            )
+        } else {
+            locationManager.requestLocationAccess()
         }
     }
 }
