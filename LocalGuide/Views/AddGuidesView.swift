@@ -8,8 +8,6 @@
 import SwiftUI
 import MapKit
 
-
-
 struct AddGuidesView: View {
 
     @State private var viewModel = AddGuideViewModel()
@@ -18,13 +16,12 @@ struct AddGuidesView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack{
+            ZStack {
                 Form {
                     titleInput
+                    cityInput
                     locationSelection
                     categorySelection
-//                    audioSelection
-//                    imageSelection
                     descriptionInput
                     uploadButton
                 }
@@ -36,8 +33,9 @@ struct AddGuidesView: View {
             }
         }
     }
+
     // MARK: Titel
-    
+
     private var titleInput: some View {
         Section {
             TextField("Vad heter/kallas den här platsen?", text: $viewModel.title)
@@ -49,7 +47,21 @@ struct AddGuidesView: View {
             Text("Titel")
         }
     }
-    
+
+    // MARK: Stad
+
+    private var cityInput: some View {
+        Section {
+            TextField("Vilken stad ligger platsen i?", text: $viewModel.city)
+            if let error = viewModel.cityError {
+                Text(error)
+                    .foregroundStyle(Color.red)
+            }
+        } header: {
+            Text("Stad")
+        }
+    }
+
     // MARK: Plats
 
     private var locationSelection: some View {
@@ -62,8 +74,6 @@ struct AddGuidesView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                // ui improvement
-                // somehow disable if gps permision is off.
 
                 Button {
                     showMapPicker = true
@@ -73,7 +83,6 @@ struct AddGuidesView: View {
                 }
                 .buttonStyle(.bordered)
             }
-            // this part for testing currently
             if let location = viewModel.tempLocation {
                 Text(String(format: "Lat: %.5f, Lon: %.5f", location.latitude, location.longitude))
                     .font(.caption)
@@ -88,6 +97,8 @@ struct AddGuidesView: View {
         }
     }
 
+    // MARK: Kategori
+
     private var categorySelection: some View {
         Section {
             Picker("Kategori:", selection: $viewModel.category) {
@@ -98,9 +109,9 @@ struct AddGuidesView: View {
             .pickerStyle(.automatic)
         }
     }
-    
+
     // MARK: Beskrivning
-    
+
     private var descriptionInput: some View {
         Section {
             TextField(
@@ -109,7 +120,7 @@ struct AddGuidesView: View {
                 axis: .vertical
             )
             .lineLimit(3...6)
-            
+
             if let error = viewModel.descriptionError {
                 Text(error)
                     .foregroundStyle(Color.red)
@@ -118,9 +129,9 @@ struct AddGuidesView: View {
             Text("Beskrivning")
         }
     }
-    
+
     // MARK: Knapp
-    
+
     private var uploadButton: some View {
         Section {
             Button {
@@ -139,7 +150,7 @@ struct AddGuidesView: View {
             .alert("Guide publicerad! ", isPresented: $showPublishedAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
-                Text("\(viewModel.title) har lagts till på kartan.") // TODO: visa hur guiden ser ut antingen i listan eller när man klickat på pinnen
+                Text("\(viewModel.title) har lagts till på kartan.")
             }
         }
     }
@@ -147,8 +158,6 @@ struct AddGuidesView: View {
 
 // MARK: - Map picker
 
- // for now placing it here
-// if gps permission on. make it show much closer to user (unsore correct based on permission off currently)
 struct MapLocationPickerView: View {
     @Binding var selectedLocation: CLLocationCoordinate2D?
     @Environment(\.dismiss) private var dismiss

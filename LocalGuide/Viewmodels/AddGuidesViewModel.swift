@@ -13,16 +13,16 @@ import Observation
 @Observable
 class AddGuideViewModel {
     var title: String = ""
+    var city: String = ""
     var description: String = ""
     var tempLocation: CLLocationCoordinate2D?
-//    var isUploading: Bool = false
-//    var error: Error?
 
     let locationManager = LocationManager()
 
     var category: Category = .other
     
     var titleError: String? = nil
+    var cityError: String? = nil
     var descriptionError: String? = nil
     var locationError: String? = nil
 
@@ -49,6 +49,7 @@ class AddGuideViewModel {
         title = ""
         description = ""
         tempLocation = nil
+        city = ""
         category = .other
         titleError = nil
         descriptionError = nil
@@ -69,7 +70,8 @@ class AddGuideViewModel {
     }
 
     func validate() -> Bool {
-        titleError = validateTextField(title, maxLength: 50)
+        titleError = validateTextField(title, maxLength: 30)
+        cityError = validateTextField(city, maxLength: 58)
         descriptionError = validateTextField(description, maxLength: 1000)
         locationError = validateLocation(tempLocation)
         return isValid

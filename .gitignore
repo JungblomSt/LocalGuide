@@ -41,7 +41,7 @@ Podfile.lock
 # ========================
 # NEVER commit your Firebase config
 GoogleService-Info.plist
-
+.GoogleService-Info.plist
 # ========================
 # macOS
 # ========================
@@ -75,3 +75,4 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 *.xcuserstate
+LocalGuide/GoogleService-Info.plist
