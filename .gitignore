@@ -41,7 +41,7 @@ Podfile.lock
 # ========================
 # NEVER commit your Firebase config
 GoogleService-Info.plist
-
+.GoogleService-Info.plist
 # ========================
 # macOS
 # ========================

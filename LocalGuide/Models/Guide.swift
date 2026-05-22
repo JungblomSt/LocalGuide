@@ -139,7 +139,7 @@ extension Guide{
         Guide(
             id: "9",
             title: "Vadstena slott",
-            city: "Vadstena"
+            city: "Vadstena",
             category: "history",
             description: "Praktfullt renässansslott vid Vätterns strand, byggt på 1500-talet av Gustav Vasa.",
             longitude: 14.8921,
