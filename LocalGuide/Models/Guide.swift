@@ -27,7 +27,7 @@ struct Guide: Identifiable, Hashable {
         self.longitude = longitude
         self.latitude = latitude
         self.imageURL = image
-        self.audioURL = nil
+        self.audioURL = audioURL
     }
 }
 enum Category: String, CaseIterable, Identifiable {
