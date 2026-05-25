@@ -71,7 +71,8 @@ extension Guide{
             description: "Gamla Stan är hjärtat av Stockholm och en av Europas bäst bevarade medeltidsstäder. \n Gamla Stan är hjärtat av Stockholm och en av Europas bäst bevarade medeltidsstäder. Kullerstensgatorna, de färgglada fasaderna och de smala gränderna skapar en unik atmosfär. Här finns Kungliga slottet, Storkyrkan och Stortorget – platser som vittnar om mer än sju hundra år av svensk historia. Längs Österlånggatan hittar man caféer, restauranger och konstgallerier. En promenad längs Skeppsbron ger en storslagen vy över vattnet som omger ön på alla sidor.",
             longitude: 18.0686,
             latitude: 59.3233,
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Gamla_stan_bank.jpg/1280px-Gamla_stan_bank.jpg"
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Gamla_stan_bank.jpg/1280px-Gamla_stan_bank.jpg",
+            audioURL: "lsw3_07.mp3"
         ),
         Guide(
             id: "2",
