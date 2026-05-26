@@ -10,12 +10,13 @@ import CoreLocation
 import MapKit
 
 struct GuideDetailView: View {
-    
+
     let guide: Guide
-    
+    @State private var audioPlayer = AudioPlayerManager()
+
 ///    aktivera om man vill kunna se avståndet även i detaljvyn
 //    @State private var locationManager = LocationManager()
-//    
+//
 //    private let userLocation = CLLocation(latitude: 59.3293, longitude: 18.0686)
     
     var body: some View {
@@ -85,13 +86,24 @@ extension GuideDetailView {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
             
-            // TODO: This shuld be a button that starts the audiofile
-            VStack (spacing: 12){
-                Image(systemName: "speaker.wave.2.fill")
-                    .font(.largeTitle)
-                Text("Lyssna")
+            if guide.audioURL != nil {
+                Button {
+                    if audioPlayer.isPlaying {
+                        audioPlayer.stop()
+                    } else if let name = guide.audioURL,
+                              let url = Bundle.main.url(forResource: name, withExtension: nil) {
+                        audioPlayer.play(url: url)
+                    }
+                } label: {
+                    VStack(spacing: 12) {
+                        Image(systemName: audioPlayer.isPlaying ? "stop.fill" : "speaker.wave.2.fill")
+                            .font(.largeTitle)
+                        Text(audioPlayer.isPlaying ? "Stoppa" : "Lyssna")
+                        // change icon to play after audio done
+                    }
+                }
+                .padding(40)
             }
-            .padding(40)
             
         }
     }
