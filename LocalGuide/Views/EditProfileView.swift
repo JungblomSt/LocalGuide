@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct EditProfileView: View {
     @Bindable var viewModel: ProfileViewModel
@@ -20,7 +21,15 @@ struct EditProfileView: View {
                     }
                     .buttonStyle(.borderedProminent)
                 }
-
+            }
+            Section("Inställningar") {
+                Button {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                } label: {
+                    Label("Öppna appinställningar", systemImage: "gear")
+                }
             }
         }
         .navigationTitle("Redigera profil")
