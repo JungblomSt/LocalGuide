@@ -36,8 +36,7 @@ struct ProfileView: View {
                     }
 
                     NavigationLink {
-                        Text("Mina delade")
-                            .navigationTitle("Mina delade")
+                        SharedGuidesView(guides: viewModel.sharedGuides)
                     } label: {
                         profileRow(
                             title: "Mina delade",

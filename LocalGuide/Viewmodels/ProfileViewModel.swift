@@ -12,7 +12,7 @@ final class ProfileViewModel {
     
     var username: String = "Användarnamn"
     var savedGuides: [Guide] = Guide.sampleData
-    var sharedGuides: [Guide] = []
+    var sharedGuides: [Guide] = Guide.sampleData
 
     func isSaved(_ guide: Guide) -> Bool {
         savedGuides.contains { $0.id == guide.id }
