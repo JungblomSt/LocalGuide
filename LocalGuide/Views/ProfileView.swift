@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @State private var viewModel = ProfileViewModel()
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
@@ -19,15 +20,14 @@ struct ProfileView: View {
                     Text("Min profil")
                         .font(.title.bold())
 
-                    Text("AnvändarNamn")
+                    Text(viewModel.username)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
 
                 VStack(spacing: 12) {
                     NavigationLink {
-                        Text("Sparade guider")
-                            .navigationTitle("Sparade guider")
+                        SavedGuidesView(guides: viewModel.savedGuides)
                     } label: {
                         profileRow(
                             title: "Sparade guider",
