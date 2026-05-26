@@ -45,8 +45,7 @@ struct ProfileView: View {
                     }
 
                     NavigationLink {
-                        Text("Redigera profil")
-                            .navigationTitle("Redigera profil")
+                        EditProfileView(viewModel: viewModel)
                     } label: {
                         profileRow(
                             title: "Redigera profil",
@@ -61,7 +60,7 @@ struct ProfileView: View {
             .navigationTitle("Profil")
         }
     }
-    
+
     private func profileRow(title: String, systemImage: String) -> some View {
         HStack {
             Image(systemName: systemImage)
