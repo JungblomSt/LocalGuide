@@ -6,11 +6,13 @@
 //
 
 import AVFoundation
+import Observation
 
-class AudioPlayerManager: ObservableObject {
+@Observable
+class AudioPlayerManager {
     private var player: AVAudioPlayer?
 
-    @Published var isPlaying = false
+    var isPlaying = false
 
     func play(url: URL) {
         do {
