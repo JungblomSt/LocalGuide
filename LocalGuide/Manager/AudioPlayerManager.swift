@@ -14,6 +14,8 @@ class AudioPlayerManager {
 
     var isPlaying = false
 
+    var isLoaded: Bool { player != nil }
+
     func play(url: URL) {
         do {
             player = try AVAudioPlayer(contentsOf: url)
@@ -22,6 +24,16 @@ class AudioPlayerManager {
         } catch {
             print("AudioPlayerManager: failed to play \(url): \(error)")
         }
+    }
+
+    func pause() {
+        player?.pause()
+        isPlaying = false
+    }
+
+    func resume() {
+        player?.play()
+        isPlaying = true
     }
 
     func stop() {

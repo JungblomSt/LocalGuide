@@ -94,9 +94,9 @@ extension GuideDetailView {
                     viewModel.toggleAudio()
                 } label: {
                     VStack(spacing: 12) {
-                        Image(systemName: viewModel.isPlaying ? "stop.fill" : "speaker.wave.2.fill")
+                        Image(systemName: viewModel.isPlaying ? "pause.fill" : "speaker.wave.2.fill")
                             .font(.largeTitle)
-                        Text(viewModel.isPlaying ? "Stoppa" : "Lyssna")
+                        Text(viewModel.isPlaying ? "Pausa" : "Lyssna")
                     }
                 }
                 .padding(40)
