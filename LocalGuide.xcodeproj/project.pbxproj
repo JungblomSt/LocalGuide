@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8115BFAC2FC5BB9E007EABB8 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8115BFAB2FC5BB9E007EABB8 /* FirebaseAuth */; };
 		816284C52FBF002900252553 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 816284C42FBF002900252553 /* FirebaseFirestore */; };
 		816284C72FBF002D00252553 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 816284C62FBF002D00252553 /* FirebaseCore */; };
 /* End PBXBuildFile section */
@@ -29,6 +30,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				816284C72FBF002D00252553 /* FirebaseCore in Frameworks */,
+				8115BFAC2FC5BB9E007EABB8 /* FirebaseAuth in Frameworks */,
 				816284C52FBF002900252553 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -82,6 +84,7 @@
 			packageProductDependencies = (
 				816284C42FBF002900252553 /* FirebaseFirestore */,
 				816284C62FBF002D00252553 /* FirebaseCore */,
+				8115BFAB2FC5BB9E007EABB8 /* FirebaseAuth */,
 			);
 			productName = LocalGuide;
 			productReference = D66BB0CA2FB36B4800704582 /* LocalGuide.app */;
@@ -369,6 +372,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		8115BFAB2FC5BB9E007EABB8 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 816284C22FBEFC8000252553 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
 		816284C42FBF002900252553 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 816284C22FBEFC8000252553 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
