@@ -46,7 +46,7 @@ class AddGuideViewModel {
         isUploadingImage = true
         do {
             print("Laddar upp bild...")
-            let url = try await StorageManager.shared.saveImageAndGetURL(image: image)
+            let url = try await StorageService.shared.saveImageAndGetURL(image: image)
             imageURL = url
             print("Bild uppladdad! URL: \(url)")
         } catch {
@@ -71,7 +71,7 @@ class AddGuideViewModel {
             image: imageURL
         )
         
-        try await GuideManager.shared.uploadGuide(guide: newGuide)
+        try await GuideService.shared.uploadGuide(guide: newGuide)
         
         reset()
     }

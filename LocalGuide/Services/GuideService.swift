@@ -8,9 +8,9 @@
 import Foundation
 import FirebaseFirestore
 
-final class GuideManager {
+final class GuideService {
     
-    static let shared = GuideManager()
+    static let shared = GuideService()
     
     private init() {}
     
