@@ -207,7 +207,7 @@ struct AddGuidesView: View {
                         }
                         
                         // Spara guiden
-                        viewModel.saveGuide()
+                        try await viewModel.saveGuide()
                         viewModel.reset()
                         tempImage = nil
                         selectedItem = nil

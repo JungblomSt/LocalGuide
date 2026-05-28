@@ -55,12 +55,25 @@ class AddGuideViewModel {
         isUploadingImage = false
     }
     
-    func saveGuide() {
+    func saveGuide() async throws {
         
+        guard validate() else { return }
+        guard let location = tempLocation else { return }
         
-        // TODO: This
+        let newGuide = Guide(
+            id: UUID().uuidString,
+            title: title.trimmingCharacters(in: .whitespaces),
+            city: city.trimmingCharacters(in: .whitespaces),
+            category: category.rawValue,
+            description: description,
+            longitude: location.longitude,
+            latitude: location.latitude,
+            image: imageURL
+        )
         
+        try await GuideManager.shared.uploadGuide(guide: newGuide)
         
+        reset()
     }
     
     func reset() {

@@ -19,7 +19,7 @@ final class StorageManager {
         storage.child("guide_images")
     }
     
-    func saveImage(data: Data) async throws -> (Path: String, Name: String) {
+    func saveGuideImage(data: Data) async throws -> (Path: String, Name: String) {
         let meta = StorageMetadata()
         meta.contentType = "image/jpeg"
         
@@ -37,7 +37,7 @@ final class StorageManager {
         guard let data = image.jpegData(compressionQuality: 0.8) else {
             throw URLError(.badURL)
         }
-        return try await saveImage(data: data)
+        return try await saveGuideImage(data: data)
     }
     
     func getDownloadURL(path: String) async throws -> URL {
@@ -45,7 +45,7 @@ final class StorageManager {
     }
     
     func getData(path: String) async throws -> Data {
-        try await guideImagesReference.child(path).data(maxSize: 3 * 1024 * 1024) // 3MB max
+        try await guideImagesReference.child(path).data(maxSize: 10 * 1024 * 1024) // 10MB max
     }
     
     func saveImageAndGetURL(image: UIImage) async throws -> String {
