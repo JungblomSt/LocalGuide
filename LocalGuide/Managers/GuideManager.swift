@@ -1,0 +1,68 @@
+//
+//  GuideManager.swift
+//  LocalGuide
+//
+//  Created by Stina Thun on 2026-05-27.
+//
+
+import Foundation
+import FirebaseFirestore
+
+final class GuideManager {
+    
+    static let shared = GuideManager()
+    
+    private init() {}
+    
+    private let guidesCollection = Firestore.firestore().collection("guides")
+    
+    private func guideDocument(guideId: String) -> DocumentReference {
+        guidesCollection.document(guideId)
+    }
+    
+    func uploadGuide(guide: Guide) async throws {
+        try guideDocument(guideId: guide.id.uuidString).setData(from: guide, merge: false)
+    }
+    
+    func fetchGuides(completion: @escaping ([Guide]) -> Void) {
+        self.guidesCollection.getDocuments { (querySnapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+                completion([])
+            } else {
+                Task { @MainActor in
+                    var guides: [Guide] = []
+                    
+                    guard let documents = querySnapshot?.documents else {
+                        completion([])
+                        return
+                    }
+                    
+                    for document in documents {
+                        do {
+                            let guide = try document.data(as: Guide.self)
+                            guides.append(guide)
+                        } catch {
+                            print("Error decoding guide: \(error)")
+                        }
+                    }
+                    
+                    completion(guides)
+                }
+            }
+        }
+    }
+    
+    // Funktion för att ladda upp sample data
+    func uploadSampleData() async {
+        for guide in Guide.sampleData {
+            do {
+                try await uploadGuide(guide: guide)
+                print("✅ Uppladdad: \(guide.title)")
+            } catch {
+                print("❌ Fel vid uppladdning av \(guide.title): \(error)")
+            }
+        }
+        print("🎉 Alla sample guides uppladdade!")
+    }
+}

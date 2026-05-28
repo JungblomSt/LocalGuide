@@ -41,22 +41,23 @@ extension GuideDetailView {
     
     private var imageSection: some View {
         VStack {
-            // TODO: Show Image
             if let urlString = guide.imageURL {
                 AsyncImage(url: URL(string: urlString)) { phase in
                     switch phase {
                     case .success(let image):
                         image
                             .resizable()
-                            .scaledToFill()
-                            .frame(height: 300)
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity, maxHeight: 300)
                             .clipped()
                     case .failure:
                         Image(systemName: "photo")
                             .resizable()
+                            .frame(height: 300)
                             .scaledToFill()
                     case .empty:
                         ProgressView()
+                            .frame(height: 300)
                     @unknown default:
                         EmptyView()
                     }
@@ -64,8 +65,11 @@ extension GuideDetailView {
             } else {
                 Image(systemName: "photo")
                     .resizable()
-                    .scaledToFill()
+                    .frame(height: 300)
+                    .scaledToFit()
+                
             }
+            
             
         }
         .frame(height: 300)
