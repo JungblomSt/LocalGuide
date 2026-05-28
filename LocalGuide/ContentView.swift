@@ -33,24 +33,7 @@ struct ContentView: View {
                 GuideListView()
             }
             Tab("Profil", systemImage: "person") {
-                profileView
-            }
-        }
-    }
-
-    private var profileView: some View {
-        NavigationStack {
-            Form {
-                if let email = auth.currentUser?.email {
-                    Section("Inloggad som") {
-                        Text(email)
-                    }
-                }
-                Section {
-                    Button("Logga ut", role: .destructive) {
-                        try? auth.signOut()
-                    }
-                }
+                ProfileView()
             }
             .navigationTitle("Profil")
         }

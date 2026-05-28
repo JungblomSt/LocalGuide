@@ -7,12 +7,17 @@
 
 import SwiftUI
 import MapKit
+import PhotosUI
 
 struct AddGuidesView: View {
 
     @State private var viewModel = AddGuideViewModel()
     @State private var showPublishedAlert: Bool = false
     @State private var showMapPicker: Bool = false
+    
+    @State private var selectedItem: PhotosPickerItem? = nil
+    @State private var tempImage: UIImage? = nil
+    @State private var isLoadingImage: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -22,6 +27,7 @@ struct AddGuidesView: View {
                     cityInput
                     locationSelection
                     categorySelection
+                    imagePicker
                     descriptionInput
                     uploadButton
                 }
@@ -109,6 +115,64 @@ struct AddGuidesView: View {
             .pickerStyle(.automatic)
         }
     }
+    
+    // MARK: Bild
+    
+    private var imagePicker: some View {
+        Section {
+            HStack {
+                PhotosPicker(selection: $selectedItem, matching: .images, photoLibrary: .shared()) {
+                    HStack {
+                        Image(systemName: "folder.fill")
+                        Text("Välj en bild")
+                        
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                
+//                // Aktivera när det är dags för "ta foto logik" prioriteras ned pga ej möjlighet att testa
+//                Divider()
+//                
+//                Button{
+//                // TODO: Ta ett fote logik
+//                }label: {
+//                    HStack {
+//                        Image(systemName: "camera.fill")
+//                        Text("Ta en bild")
+//                    }
+//                    .frame(maxWidth: .infinity)
+//                }
+            }
+            
+            // Visa vald bild
+            if let image = tempImage {
+                VStack(alignment: .leading, spacing: 8) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 200)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    
+                    Button(role: .destructive) {
+                        tempImage = nil
+                        selectedItem = nil
+                    } label: {
+                        Label("Ta bort bild", systemImage: "trash")
+                            .font(.caption)
+                    }
+                }
+            } else if isLoadingImage {
+                HStack {
+                    ProgressView()
+                    Text("Laddar bild...")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            
+        } header: {
+            Text("Bild")
+        }
+    }
 
     // MARK: Beskrivning
 
@@ -135,23 +199,51 @@ struct AddGuidesView: View {
     private var uploadButton: some View {
         Section {
             Button {
-                if viewModel.validate() {
-                    viewModel.saveGuide()
-                    viewModel.reset()
-                    showPublishedAlert = true
+                Task {
+                    if viewModel.validate() {
+
+                        if let image = tempImage {
+                            await viewModel.uploadImage(image)
+                        }
+                        
+                        // Spara guiden
+                        try await viewModel.saveGuide()
+                        viewModel.reset()
+                        tempImage = nil
+                        selectedItem = nil
+                        showPublishedAlert = true
+                    }
                 }
             } label: {
                 HStack {
                     Spacer()
-                    Text("Publisera")
+                    if viewModel.isUploadingImage {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                        Text("Publicerar...")
+                    } else {
+                        Text("Publisera")
+                    }
                     Spacer()
                 }
             }
-            .alert("Guide publicerad! ", isPresented: $showPublishedAlert) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text("\(viewModel.title) har lagts till på kartan.")
+            .disabled(viewModel.isUploadingImage)
+        }
+        .onChange(of: selectedItem) { oldValue, newValue in
+            Task {
+                if let newValue {
+                    isLoadingImage = true
+                    // Ladda bilden för preview
+                    if let data = try? await newValue.loadTransferable(type: Data.self),
+                       let image = UIImage(data: data) {
+                        tempImage = image
+                    }
+                    isLoadingImage = false
+                }
             }
+        }
+        .alert("Guide publicerad! ", isPresented: $showPublishedAlert) {
+            Button("OK", role: .cancel) { }
         }
     }
 }
