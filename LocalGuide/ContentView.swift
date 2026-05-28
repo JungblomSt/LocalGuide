@@ -5,10 +5,23 @@
 //  Created by Stina Thun on 2026-05-12.
 //
 
+
 import SwiftUI
+import FirebaseAuth
 
 struct ContentView: View {
+    @State private var auth = AuthService()
+    @State private var userRepository = UserRepository()
+
     var body: some View {
+        if auth.isSignedIn {
+            mainTabView
+        } else {
+            LoginView(auth: auth, userRepository: userRepository)
+        }
+    }
+
+    private var mainTabView: some View {
         TabView {
             Tab("Karta", systemImage: "map") {
                 HomeMapView(guides: Guide.sampleData)
@@ -22,6 +35,7 @@ struct ContentView: View {
             Tab("Profil", systemImage: "person") {
                 ProfileView()
             }
+            .navigationTitle("Profil")
         }
     }
 }

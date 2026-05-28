@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8115BFAC2FC5BB9E007EABB8 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8115BFAB2FC5BB9E007EABB8 /* FirebaseAuth */; };
 		816284C52FBF002900252553 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 816284C42FBF002900252553 /* FirebaseFirestore */; };
 		816284C72FBF002D00252553 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 816284C62FBF002D00252553 /* FirebaseCore */; };
 		D684C39A2FC470C900CFD32C /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D684C3992FC470C900CFD32C /* FirebaseStorage */; };
@@ -30,6 +31,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				816284C72FBF002D00252553 /* FirebaseCore in Frameworks */,
+				8115BFAC2FC5BB9E007EABB8 /* FirebaseAuth in Frameworks */,
 				816284C52FBF002900252553 /* FirebaseFirestore in Frameworks */,
 				D684C39A2FC470C900CFD32C /* FirebaseStorage in Frameworks */,
 			);
@@ -84,6 +86,7 @@
 			packageProductDependencies = (
 				816284C42FBF002900252553 /* FirebaseFirestore */,
 				816284C62FBF002D00252553 /* FirebaseCore */,
+				8115BFAB2FC5BB9E007EABB8 /* FirebaseAuth */,
 				D684C3992FC470C900CFD32C /* FirebaseStorage */,
 			);
 			productName = LocalGuide;
@@ -372,6 +375,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		8115BFAB2FC5BB9E007EABB8 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 816284C22FBEFC8000252553 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
 		816284C42FBF002900252553 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 816284C22FBEFC8000252553 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
