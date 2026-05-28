@@ -35,7 +35,6 @@ struct ContentView: View {
             Tab("Profil", systemImage: "person") {
                 ProfileView()
             }
-            .navigationTitle("Profil")
         }
     }
 }
