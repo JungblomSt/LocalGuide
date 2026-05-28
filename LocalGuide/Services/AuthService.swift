@@ -14,7 +14,7 @@ final class AuthService {
     
     init(){
         currentUser = Auth.auth().currentUser
-        Auth.auth().addStateDidChangeListener { _, user in
+        _ = Auth.auth().addStateDidChangeListener { _, user in
             self.currentUser = user
         }
     }
