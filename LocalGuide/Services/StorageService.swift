@@ -9,8 +9,8 @@ import Foundation
 import FirebaseStorage
 import UIKit
 
-final class StorageManager {
-    static let shared = StorageManager()
+final class StorageService {
+    static let shared = StorageService()
     private init() {}
   
     private let storage = Storage.storage().reference()
