@@ -10,6 +10,8 @@ import SwiftUI
 import FirebaseAuth
 
 struct ContentView: View {
+    @State private var selectedTab = 0
+    @State private var audioPlayer = AudioPlayerManager()
     @State private var auth = AuthService()
     @State private var userRepository = UserRepository()
 
@@ -23,17 +25,24 @@ struct ContentView: View {
 
     private var mainTabView: some View {
         TabView {
-            Tab("Karta", systemImage: "map") {
+            Tab("Karta", systemImage: "map", value: 0) {
                 HomeMapView(guides: Guide.sampleData)
             }
-            Tab("Lägg till", systemImage: "plus") {
+            Tab("Lägg till", systemImage: "plus", value: 1) {
                 AddGuidesView()
             }
-            Tab("Lista", systemImage: "list.bullet") {
+            Tab("Lista", systemImage: "list.bullet", value: 2) {
                 GuideListView()
             }
-            Tab("Profil", systemImage: "person") {
+            Tab("Profil", systemImage: "person", value: 3) {
                 ProfileView()
+            }
+        }
+        .onChange(of: selectedTab) {
+            if Int.random(in: 1...1000) == 1,
+               let url = Bundle.main.url(forResource: "lsw3_07", withExtension: "mp3") {
+                audioPlayer.play(url: url)
+
             }
         }
     }
