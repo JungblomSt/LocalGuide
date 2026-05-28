@@ -1,0 +1,35 @@
+//
+//  UserRepository.swift
+//  LocalGuide
+//
+//  Created by neda khalajnejad on 2026-05-26.
+//
+
+import FirebaseFirestore
+
+final class UserRepository {
+    private let collection = Firestore.firestore().collection("users")
+    
+    func createProfile(_ profile: UserProfile) async throws {
+        guard let uid = profile.id else {
+            throw RepositoryError.missingID
+        }
+        try collection.document(uid).setData(from: profile)
+    }
+    
+    func fetchProfile(uid: String)async throws -> UserProfile {
+        let snapshot = try await collection.document(uid).getDocument()
+        return try snapshot.data(as: UserProfile.self)
+    }
+    
+    func updateProfile(_ profile: UserProfile) async throws {
+        guard let uid = profile.id else {
+            throw RepositoryError.missingID
+        }
+        try collection.document(uid).setData(from: profile, merge: true)
+    }
+}
+
+enum RepositoryError: Error {
+    case missingID
+}

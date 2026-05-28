@@ -5,14 +5,26 @@
 //  Created by Stina Thun on 2026-05-12.
 //
 
+
 import SwiftUI
+import FirebaseAuth
 
 struct ContentView: View {
     @State private var selectedTab = 0
     @State private var audioPlayer = AudioPlayerManager()
+    @State private var auth = AuthService()
+    @State private var userRepository = UserRepository()
 
     var body: some View {
-        TabView(selection: $selectedTab) {
+        if auth.isSignedIn {
+            mainTabView
+        } else {
+            LoginView(auth: auth, userRepository: userRepository)
+        }
+    }
+
+    private var mainTabView: some View {
+        TabView {
             Tab("Karta", systemImage: "map", value: 0) {
                 HomeMapView(guides: Guide.sampleData)
             }
@@ -23,13 +35,14 @@ struct ContentView: View {
                 GuideListView()
             }
             Tab("Profil", systemImage: "person", value: 3) {
-
+                ProfileView()
             }
         }
         .onChange(of: selectedTab) {
             if Int.random(in: 1...1000) == 1,
                let url = Bundle.main.url(forResource: "lsw3_07", withExtension: "mp3") {
                 audioPlayer.play(url: url)
+
             }
         }
     }
