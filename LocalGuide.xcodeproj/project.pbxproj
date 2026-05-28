@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		816284C52FBF002900252553 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 816284C42FBF002900252553 /* FirebaseFirestore */; };
 		816284C72FBF002D00252553 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 816284C62FBF002D00252553 /* FirebaseCore */; };
+		D684C39A2FC470C900CFD32C /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D684C3992FC470C900CFD32C /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 			files = (
 				816284C72FBF002D00252553 /* FirebaseCore in Frameworks */,
 				816284C52FBF002900252553 /* FirebaseFirestore in Frameworks */,
+				D684C39A2FC470C900CFD32C /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +84,7 @@
 			packageProductDependencies = (
 				816284C42FBF002900252553 /* FirebaseFirestore */,
 				816284C62FBF002D00252553 /* FirebaseCore */,
+				D684C3992FC470C900CFD32C /* FirebaseStorage */,
 			);
 			productName = LocalGuide;
 			productReference = D66BB0CA2FB36B4800704582 /* LocalGuide.app */;
@@ -378,6 +381,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 816284C22FBEFC8000252553 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCore;
+		};
+		D684C3992FC470C900CFD32C /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 816284C22FBEFC8000252553 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

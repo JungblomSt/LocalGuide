@@ -8,6 +8,8 @@
 import Foundation
 import CoreLocation
 import Observation
+import _PhotosUI_SwiftUI
+import UIKit
 
 
 @Observable
@@ -15,8 +17,11 @@ class AddGuideViewModel {
     var title: String = ""
     var city: String = ""
     var description: String = ""
+    
+    var imageURL: String? = nil
+    var isUploadingImage: Bool = false
+    
     var tempLocation: CLLocationCoordinate2D?
-
     let locationManager = LocationManager()
 
     var category: Category = .other
@@ -37,6 +42,19 @@ class AddGuideViewModel {
         }
     }
     
+    func uploadImage(_ image: UIImage) async {
+        isUploadingImage = true
+        do {
+            print("Laddar upp bild...")
+            let url = try await StorageManager.shared.saveImageAndGetURL(image: image)
+            imageURL = url
+            print("Bild uppladdad! URL: \(url)")
+        } catch {
+            print("Fel vid bilduppladdning: \(error.localizedDescription)")
+        }
+        isUploadingImage = false
+    }
+    
     func saveGuide() {
         
         
@@ -51,9 +69,11 @@ class AddGuideViewModel {
         tempLocation = nil
         city = ""
         category = .other
+        imageURL = nil
         titleError = nil
         descriptionError = nil
         locationError = nil
+        isUploadingImage = false
     }
     
     func validateTextField(_ text: String, maxLength: Int) -> String? {
@@ -76,5 +96,4 @@ class AddGuideViewModel {
         locationError = validateLocation(tempLocation)
         return isValid
     }
-    
 }
