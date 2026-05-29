@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @State private var viewModel: ProfileViewModel
-    
+
     init(auth: AuthService, userRepository: UserRepository) {
         _viewModel = State(
             initialValue: ProfileViewModel(
@@ -32,6 +32,14 @@ struct ProfileView: View {
                     Text(viewModel.username)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+
+                    if !viewModel.bio.isEmpty {
+                        Text(viewModel.bio)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
                 }
 
                 VStack(spacing: 12) {

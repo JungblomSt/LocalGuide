@@ -24,9 +24,22 @@ struct EditProfileView: View {
                     .buttonStyle(.borderedProminent)
                 }
             }
+            Section("Bio") {
+                TextEditor(text: $viewModel.bio)
+                    .frame(minHeight: 100)
+
+                Button("Spara bio") {
+                    Task {
+                        await viewModel.updateBio()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+            }
             Section("Inställningar") {
                 Button {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                    if let url = URL(
+                        string: UIApplication.openSettingsURLString
+                    ) {
                         UIApplication.shared.open(url)
                     }
                 } label: {
@@ -40,10 +53,11 @@ struct EditProfileView: View {
 
 #Preview {
     NavigationStack {
-        EditProfileView(viewModel: ProfileViewModel(
-            auth: AuthService(),
-            userRepository: UserRepository()
+        EditProfileView(
+            viewModel: ProfileViewModel(
+                auth: AuthService(),
+                userRepository: UserRepository()
+            )
         )
-      )
     }
 }
