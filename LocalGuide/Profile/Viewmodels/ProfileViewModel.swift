@@ -14,6 +14,18 @@ final class ProfileViewModel {
     var savedGuides: [Guide] = Guide.sampleData
     var sharedGuides: [Guide] = Guide.sampleData
 
+
+    private let auth: AuthService
+    private let userRepository: UserRepository
+
+    init(
+        auth: AuthService,
+        userRepository: UserRepository
+    ) {
+        self.auth = auth
+        self.userRepository = userRepository
+    }
+
     func isSaved(_ guide: Guide) -> Bool {
         savedGuides.contains { $0.id == guide.id }
     }

@@ -9,6 +9,15 @@ import SwiftUI
 
 struct ProfileView: View {
     @State private var viewModel = ProfileViewModel()
+    
+    init(auth: AuthService, userRepository: UserRepository) {
+        _viewModel = State(
+            initialValue: ProfileViewModel(
+                auth: auth,
+                userRepository: userRepository
+            )
+        )
+    }
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
@@ -81,5 +90,8 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView()
+    ProfileView(
+        auth: AuthService(),
+        userRepository: UserRepository()
+    )
 }
