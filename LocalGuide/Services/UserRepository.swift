@@ -28,6 +28,13 @@ final class UserRepository {
         }
         try collection.document(uid).setData(from: profile, merge: true)
     }
+    
+    /// Updates only the display name field for a user profile in Firestore
+    func updateDisplayName(uid: String, displayName: String) async throws {
+        try await collection.document(uid).updateData([
+            "displayName": displayName
+        ])
+    }
 }
 
 enum RepositoryError: Error {

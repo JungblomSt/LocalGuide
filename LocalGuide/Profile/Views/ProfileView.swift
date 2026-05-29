@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @State private var viewModel = ProfileViewModel()
+    @State private var viewModel: ProfileViewModel
     
     init(auth: AuthService, userRepository: UserRepository) {
         _viewModel = State(
@@ -67,6 +67,10 @@ struct ProfileView: View {
             }
             .padding()
             .navigationTitle("Profil")
+            // Loads the user's profile when the profile screen appears
+            .task {
+                await viewModel.loadProfile()
+            }
         }
     }
 

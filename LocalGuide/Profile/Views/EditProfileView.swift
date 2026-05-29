@@ -17,7 +17,9 @@ struct EditProfileView: View {
                     TextField("Användarnamn", text: $viewModel.username)
 
                     Button("Spara") {
-                        // Firebase update will be added later.
+                        Task {
+                            await viewModel.updateUsername()
+                        }
                     }
                     .buttonStyle(.borderedProminent)
                 }
@@ -38,6 +40,10 @@ struct EditProfileView: View {
 
 #Preview {
     NavigationStack {
-        EditProfileView(viewModel: ProfileViewModel())
+        EditProfileView(viewModel: ProfileViewModel(
+            auth: AuthService(),
+            userRepository: UserRepository()
+        )
+      )
     }
 }
