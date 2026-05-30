@@ -34,11 +34,21 @@ struct ProfileView: View {
                         .foregroundStyle(.secondary)
 
                     if !viewModel.bio.isEmpty {
-                        Text(viewModel.bio)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Bio")
+                                .font(.headline)
+
+                            Text(viewModel.bio)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .background(.thinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .padding(.horizontal)
+
                     }
                 }
 
