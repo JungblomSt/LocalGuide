@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct ProfileView: View {
+    private let auth: AuthService
     @State private var viewModel: ProfileViewModel
 
     init(auth: AuthService, userRepository: UserRepository) {
+        self.auth = auth
         _viewModel = State(
             initialValue: ProfileViewModel(
                 auth: auth,
@@ -85,6 +87,15 @@ struct ProfileView: View {
             }
             .padding()
             .navigationTitle("Profil")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        ProfileSettingsView(auth: auth)
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                }
+            }
             // Loads the user's profile when the profile screen appears
             .task {
                 await viewModel.loadProfile()
