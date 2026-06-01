@@ -35,7 +35,7 @@ struct ContentView: View {
                 GuideListView()
             }
             Tab("Profil", systemImage: "person", value: 3) {
-                ProfileView()
+                ProfileView(auth: auth, userRepository: userRepository)
             }
         }
         .onChange(of: selectedTab) {
