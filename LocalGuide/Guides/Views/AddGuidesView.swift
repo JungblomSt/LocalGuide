@@ -11,7 +11,14 @@ import PhotosUI
 
 struct AddGuidesView: View {
 
-    @State private var viewModel = AddGuideViewModel()
+    @State private var viewModel: AddGuideViewModel
+    
+    init(auth: AuthService) {
+        _viewModel = State(
+            initialValue: AddGuideViewModel(auth: auth)
+        )
+    }
+    
     @State private var showPublishedAlert: Bool = false
     @State private var showMapPicker: Bool = false
     
@@ -295,6 +302,6 @@ struct MapLocationPickerView: View {
 }
 
 #Preview {
-    AddGuidesView()
+    AddGuidesView(auth: AuthService())
 }
 

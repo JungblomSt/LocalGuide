@@ -29,7 +29,7 @@ struct ContentView: View {
                 HomeMapView(guides: Guide.sampleData)
             }
             Tab("Lägg till", systemImage: "plus", value: 1) {
-                AddGuidesView()
+                AddGuidesView(auth: auth)
             }
             Tab("Lista", systemImage: "list.bullet", value: 2) {
                 GuideListView()
