@@ -27,23 +27,15 @@ struct EditProfileView: View {
             Section("Bio") {
                 TextEditor(text: $viewModel.bio)
                     .frame(minHeight: 100)
-
-                Button("Spara bio") {
-                    Task {
-                        await viewModel.updateBio()
+                HStack {
+                    Spacer()
+                    
+                    Button("Spara") {
+                        Task {
+                            await viewModel.updateBio()
+                        }
                     }
-                }
-                .buttonStyle(.borderedProminent)
-            }
-            Section("Inställningar") {
-                Button {
-                    if let url = URL(
-                        string: UIApplication.openSettingsURLString
-                    ) {
-                        UIApplication.shared.open(url)
-                    }
-                } label: {
-                    Label("Öppna appinställningar", systemImage: "gear")
+                    .buttonStyle(.borderedProminent)
                 }
             }
         }
