@@ -27,6 +27,9 @@ struct GuideDetailView: View {
             VStack {
                 imageSection
                 titleCityAudioSection
+                if viewModel.isAudioLoaded {
+                    audioProgressSection
+                }
                 Divider()
                 descriptionSection
                 mapSection
@@ -111,6 +114,35 @@ extension GuideDetailView {
         }
     }
     
+    private var audioProgressSection: some View {
+        VStack(spacing: 6) {
+            Slider(
+                value: Binding(
+                    get: { viewModel.currentTime },
+                    set: { viewModel.seek(to: $0) }
+                ),
+                in: 0...max(viewModel.duration, 0.01)
+            )
+            .tint(.accentColor)
+
+            HStack {
+                Text(formatTime(viewModel.currentTime))
+                Spacer()
+                Text(formatTime(viewModel.duration))
+            }
+            .font(.caption.monospacedDigit())
+            .foregroundColor(.secondary)
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+    }
+
+    private func formatTime(_ time: TimeInterval) -> String {
+        guard time.isFinite, time >= 0 else { return "0:00" }
+        let total = Int(time)
+        return String(format: "%d:%02d", total / 60, total % 60)
+    }
+
     private var descriptionSection: some View {
         VStack (alignment: .leading, spacing: 8) {
             Text(viewModel.guide.description)

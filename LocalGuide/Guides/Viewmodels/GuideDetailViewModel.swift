@@ -6,6 +6,10 @@ class GuideDetailViewModel {
     let guide: Guide
 
     var isPlaying: Bool { audioPlayer.isPlaying }
+    var isAudioLoaded: Bool { audioPlayer.isLoaded }
+    var currentTime: TimeInterval { audioPlayer.currentTime }
+    var duration: TimeInterval { audioPlayer.duration }
+    var progress: Double { audioPlayer.progress }
 
     init(guide: Guide) {
         self.guide = guide
@@ -20,5 +24,9 @@ class GuideDetailViewModel {
                   let url = Bundle.main.url(forResource: name, withExtension: nil) {
             audioPlayer.play(url: url)
         }
+    }
+
+    func seek(to time: TimeInterval) {
+        audioPlayer.seek(to: time)
     }
 }
