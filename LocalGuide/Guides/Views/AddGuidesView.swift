@@ -18,6 +18,9 @@ struct AddGuidesView: View {
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var tempImage: UIImage? = nil
     @State private var isLoadingImage: Bool = false
+    
+    @State private var showCamera: Bool = false
+    @State private var capturedImage: UIImage?
 
     var body: some View {
         NavigationStack {
@@ -30,11 +33,20 @@ struct AddGuidesView: View {
                     imagePicker
                     descriptionInput
                     uploadButton
+                    
                 }
+                .scrollDismissesKeyboard(.interactively)
+
                 .navigationTitle(Text("Dela en guidning"))
                 .navigationBarTitleDisplayMode(.inline)
                 .sheet(isPresented: $showMapPicker) {
                     MapLocationPickerView(selectedLocation: $viewModel.tempLocation)
+                }
+                .sheet(isPresented: $showCamera) {
+                    CameraPicker { image in
+                        capturedImage = image
+                        Task { await viewModel.uploadImage(image) }
+                    }
                 }
             }
         }
@@ -120,42 +132,35 @@ struct AddGuidesView: View {
     
     private var imagePicker: some View {
         Section {
-            HStack {
+            HStack(spacing: 12) {
                 PhotosPicker(selection: $selectedItem, matching: .images, photoLibrary: .shared()) {
-                    HStack {
-                        Image(systemName: "folder.fill")
-                        Text("Välj en bild")
-                        
-                    }
-                    .frame(maxWidth: .infinity)
+                    Label("Välj en bild", systemImage: "folder.fill")
+                        .frame(maxWidth: .infinity)
                 }
-                
-//                // Aktivera när det är dags för "ta foto logik" prioriteras ned pga ej möjlighet att testa
-//                Divider()
-//                
-//                Button{
-//                // TODO: Ta ett fote logik
-//                }label: {
-//                    HStack {
-//                        Image(systemName: "camera.fill")
-//                        Text("Ta en bild")
-//                    }
-//                    .frame(maxWidth: .infinity)
-//                }
+                .buttonStyle(.bordered)
+
+                Button {
+                    showCamera = true
+                } label: {
+                    Label("Ta ett foto", systemImage: "camera")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
             }
-            
-            // Visa vald bild
-            if let image = tempImage {
+
+            // Visa vald bild (från galleri ELLER kamera)
+            if let image = tempImage ?? capturedImage {
                 VStack(alignment: .leading, spacing: 8) {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFill()
                         .frame(height: 200)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
-                    
+
                     Button(role: .destructive) {
                         tempImage = nil
                         selectedItem = nil
+                        capturedImage = nil
                     } label: {
                         Label("Ta bort bild", systemImage: "trash")
                             .font(.caption)
@@ -168,11 +173,15 @@ struct AddGuidesView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            
+
+            if viewModel.isUploadingImage {
+                ProgressView("Laddar upp bild…")
+            }
         } header: {
             Text("Bild")
         }
     }
+
 
     // MARK: Beskrivning
 
@@ -211,6 +220,7 @@ struct AddGuidesView: View {
                         viewModel.reset()
                         tempImage = nil
                         selectedItem = nil
+                        capturedImage = nil
                         showPublishedAlert = true
                     }
                 }
@@ -246,7 +256,10 @@ struct AddGuidesView: View {
             Button("OK", role: .cancel) { }
         }
     }
+    
 }
+
+
 
 // MARK: - Map picker
 
