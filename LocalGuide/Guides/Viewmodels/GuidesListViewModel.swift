@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 @Observable
 class GuidesListViewModel {
@@ -13,19 +14,23 @@ class GuidesListViewModel {
     var isLoading = false
     var errorMessage: String?
     
-    private let guideService = GuideService.shared
-    private let userLocation = LocationManager.currentLocation
+    let locationManager = LocationManager()
+    
+    var userLocation: CLLocation? {
+        locationManager.currentLocation
+    }
     
     var sortedGuides: [Guide] {
-        guides.sorted {
-            $0.distance(from: userLocation) < $1.distance(from: userLocation)
+        guard let location = userLocation else { return guides}
+        return guides.sorted {
+            $0.distance(from: location) < $1.distance(from: location)
         }
     }
     
     func loadGuides() async {
         isLoading = true
         do {
-            guides = try await guideService.fetchGuides()
+            guides = try await GuideService.shared.fetchGuides()
         } catch {
             errorMessage = error.localizedDescription
         }
