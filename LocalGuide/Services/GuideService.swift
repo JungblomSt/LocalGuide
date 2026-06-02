@@ -5,25 +5,28 @@
 //  Created by Stina Thun on 2026-05-27.
 //
 
-import Foundation
 import FirebaseFirestore
+import Foundation
 
 final class GuideService {
-    
+
     static let shared = GuideService()
-    
+
     private init() {}
-    
+
     private let guidesCollection = Firestore.firestore().collection("guides")
-    
+
     private func guideDocument(guideId: String) -> DocumentReference {
         guidesCollection.document(guideId)
     }
-    
+
     func uploadGuide(guide: Guide) async throws {
-        try guideDocument(guideId: guide.id.uuidString).setData(from: guide, merge: false)
+        try guideDocument(guideId: guide.id.uuidString).setData(
+            from: guide,
+            merge: false
+        )
     }
-    
+
     func fetchGuides(completion: @escaping ([Guide]) -> Void) {
         self.guidesCollection.getDocuments { (querySnapshot, error) in
             if let error = error {
@@ -32,12 +35,12 @@ final class GuideService {
             } else {
                 Task { @MainActor in
                     var guides: [Guide] = []
-                    
+
                     guard let documents = querySnapshot?.documents else {
                         completion([])
                         return
                     }
-                    
+
                     for document in documents {
                         do {
                             let guide = try document.data(as: Guide.self)
@@ -46,13 +49,49 @@ final class GuideService {
                             print("Error decoding guide: \(error)")
                         }
                     }
-                    
+
                     completion(guides)
                 }
             }
         }
     }
-    
+
+    /// Fetches guides created by a specific user.
+    func fetchGuides(
+        createdBy uid: String,
+        completion: @escaping ([Guide]) -> Void
+    ) {
+        guidesCollection
+            .whereField("createdBy", isEqualTo: uid)
+            .getDocuments { querySnapshot, error in
+                if let error = error {
+                    print("Error getting user guides: \(error)")
+                    completion([])
+                    return
+                }
+
+                Task { @MainActor in
+                    var guides: [Guide] = []
+
+                    guard let documents = querySnapshot?.documents else {
+                        completion([])
+                        return
+                    }
+
+                    for document in documents {
+                        do {
+                            let guide = try document.data(as: Guide.self)
+                            guides.append(guide)
+                        } catch {
+                            print("Error decoding user guide: \(error)")
+                        }
+                    }
+
+                    completion(guides)
+                }
+            }
+    }
+
     // Funktion för att ladda upp sample data
     func uploadSampleData() async {
         for guide in Guide.sampleData {
