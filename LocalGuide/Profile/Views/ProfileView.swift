@@ -99,6 +99,7 @@ struct ProfileView: View {
             // Loads the user's profile when the profile screen appears
             .task {
                 await viewModel.loadProfile()
+                viewModel.loadSharedGuides()
             }
         }
     }

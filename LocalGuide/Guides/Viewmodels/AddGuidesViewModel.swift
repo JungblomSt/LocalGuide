@@ -10,10 +10,17 @@ import CoreLocation
 import Observation
 import _PhotosUI_SwiftUI
 import UIKit
+import FirebaseAuth
 
 
 @Observable
 class AddGuideViewModel {
+    private let auth: AuthService
+    
+    init(auth: AuthService){
+        self.auth = auth
+    }
+    
     var title: String = ""
     var city: String = ""
     var description: String = ""
@@ -73,6 +80,7 @@ class AddGuideViewModel {
         
         guard validate() else { return }
         guard let location = tempLocation else { return }
+        guard let uid = auth.currentUser?.uid else { return }
         
         let newGuide = Guide(
             id: UUID().uuidString,
@@ -83,6 +91,7 @@ class AddGuideViewModel {
             longitude: location.longitude,
             latitude: location.latitude,
             image: imageURL,
+            createdBy: uid,
             audioURL: audioURL
         )
         

@@ -16,8 +16,7 @@ final class ProfileViewModel {
     /// Stores the current user's profile bio
     var bio: String = ""
     var savedGuides: [Guide] = Guide.sampleData
-    var sharedGuides: [Guide] = Guide.sampleData
-
+    var sharedGuides: [Guide] = []
     /// Stores an error message when profile data cannot be loaded or updated
     var errorMessage: String?
 
@@ -94,6 +93,18 @@ final class ProfileViewModel {
             savedGuides.removeAll { $0.id == guide.id }
         } else {
             savedGuides.append(guide)
+        }
+    }
+    
+    /// Loads guides created by the current user from Firestore.
+    func loadSharedGuides() {
+        guard let uid = auth.currentUser?.uid else {
+            errorMessage = "Ingen inloggad användare hittades."
+            return
+        }
+
+        GuideService.shared.fetchGuidesCreatedByUser(createdBy: uid) { guides in
+            self.sharedGuides = guides
         }
     }
 }
