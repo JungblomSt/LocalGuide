@@ -36,6 +36,16 @@ struct GuideDetailView: View {
             }
         }
         .ignoresSafeArea()
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    viewModel.toggleSaved()
+                } label: {
+                    Image(systemName: viewModel.isSaved ? "heart.fill" : "heart")
+                        .foregroundStyle(viewModel.isSaved ? .red : .primary)
+                }
+            }
+        }
     }
 }
 

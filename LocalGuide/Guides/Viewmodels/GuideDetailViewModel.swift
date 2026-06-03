@@ -5,6 +5,7 @@ class GuideDetailViewModel {
     private let audioPlayer = AudioPlayerManager()
     let guide: Guide
 
+    var isSaved = false
     var isPlaying: Bool { audioPlayer.isPlaying }
     var isAudioLoaded: Bool { audioPlayer.isLoaded }
     var currentTime: TimeInterval { audioPlayer.currentTime }
@@ -15,6 +16,10 @@ class GuideDetailViewModel {
         self.guide = guide
     }
 
+    func toggleSaved() {
+        isSaved.toggle()
+    }
+    
     func toggleAudio() {
         if audioPlayer.isPlaying {
             audioPlayer.pause()
