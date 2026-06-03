@@ -57,7 +57,7 @@ final class GuideService {
     }
 
     /// Fetches guides created by a specific user.
-    func fetchGuides(
+    func fetchGuidesCreatedByUser(
         createdBy uid: String,
         completion: @escaping ([Guide]) -> Void
     ) {

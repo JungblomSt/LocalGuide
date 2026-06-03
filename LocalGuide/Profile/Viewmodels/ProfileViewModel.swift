@@ -103,7 +103,7 @@ final class ProfileViewModel {
             return
         }
 
-        GuideService.shared.fetchGuides(createdBy: uid) { guides in
+        GuideService.shared.fetchGuidesCreatedByUser(createdBy: uid) { guides in
             self.sharedGuides = guides
         }
     }
