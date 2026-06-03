@@ -22,6 +22,9 @@ struct AddGuidesView: View {
     @State private var showCamera: Bool = false
     @State private var capturedImage: UIImage?
 
+    @State private var selectedAudioURL: URL? = nil
+    @State private var showAudioPicker: Bool = false
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -31,6 +34,7 @@ struct AddGuidesView: View {
                     locationSelection
                     categorySelection
                     imagePicker
+                    audioPicker
                     descriptionInput
                     uploadButton
                     
@@ -182,6 +186,48 @@ struct AddGuidesView: View {
         }
     }
 
+    // MARK: Ljud
+
+    private var audioPicker: some View {
+        Section {
+            Button {
+                showAudioPicker = true
+            } label: {
+                HStack {
+                    Image(systemName: "folder.fill")
+                    Text("Välj en ljudfil")
+                }
+                .frame(maxWidth: .infinity)
+            }
+
+            if let url = selectedAudioURL {
+                HStack {
+                    Image(systemName: "waveform")
+                    Text(url.lastPathComponent)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button(role: .destructive) {
+                        selectedAudioURL = nil
+                    } label: {
+                        Image(systemName: "trash")
+                            .font(.caption)
+                    }
+                }
+            }
+        } header: {
+            Text("Ljud")
+        }
+        .fileImporter(
+            isPresented: $showAudioPicker,
+            allowedContentTypes: [.audio, .mp3],
+            allowsMultipleSelection: false
+        ) { result in
+            if let url = try? result.get().first {
+                selectedAudioURL = url
+            }
+        }
+    }
 
     // MARK: Beskrivning
 
@@ -214,12 +260,17 @@ struct AddGuidesView: View {
                         if let image = tempImage {
                             await viewModel.uploadImage(image)
                         }
-                        
+
+                        if let audioURL = selectedAudioURL {
+                            await viewModel.uploadAudio(audioURL)
+                        }
+
                         // Spara guiden
                         try await viewModel.saveGuide()
                         viewModel.reset()
                         tempImage = nil
                         selectedItem = nil
+                        selectedAudioURL = nil
                         capturedImage = nil
                         showPublishedAlert = true
                     }
@@ -227,7 +278,7 @@ struct AddGuidesView: View {
             } label: {
                 HStack {
                     Spacer()
-                    if viewModel.isUploadingImage {
+                    if viewModel.isUploadingImage || viewModel.isUploadingAudio {
                         ProgressView()
                             .progressViewStyle(.circular)
                         Text("Publicerar...")
@@ -237,7 +288,7 @@ struct AddGuidesView: View {
                     Spacer()
                 }
             }
-            .disabled(viewModel.isUploadingImage)
+            .disabled(viewModel.isUploadingImage || viewModel.isUploadingAudio)
         }
         .onChange(of: selectedItem) { oldValue, newValue in
             Task {

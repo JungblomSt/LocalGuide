@@ -20,6 +20,9 @@ class AddGuideViewModel {
     
     var imageURL: String? = nil
     var isUploadingImage: Bool = false
+
+    var audioURL: String? = nil
+    var isUploadingAudio: Bool = false
     
     var tempLocation: CLLocationCoordinate2D?
     let locationManager = LocationManager()
@@ -42,6 +45,17 @@ class AddGuideViewModel {
         }
     }
     
+    func uploadAudio(_ localURL: URL) async {
+        isUploadingAudio = true
+        do {
+            let url = try await StorageService.shared.saveAudioAndGetURL(localURL: localURL)
+            audioURL = url
+        } catch {
+            print("Fel vid ljuduppladdning: \(error.localizedDescription)")
+        }
+        isUploadingAudio = false
+    }
+
     func uploadImage(_ image: UIImage) async {
         isUploadingImage = true
         do {
@@ -68,7 +82,8 @@ class AddGuideViewModel {
             description: description,
             longitude: location.longitude,
             latitude: location.latitude,
-            image: imageURL
+            image: imageURL,
+            audioURL: audioURL
         )
         
         try await GuideService.shared.uploadGuide(guide: newGuide)
@@ -83,10 +98,12 @@ class AddGuideViewModel {
         city = ""
         category = .other
         imageURL = nil
+        audioURL = nil
         titleError = nil
         descriptionError = nil
         locationError = nil
         isUploadingImage = false
+        isUploadingAudio = false
     }
     
     func validateTextField(_ text: String, maxLength: Int) -> String? {
