@@ -26,7 +26,7 @@ struct ContentView: View {
     private var mainTabView: some View {
         TabView(selection: $selectedTab) {
             Tab("Karta", systemImage: "map", value: 0) {
-                HomeMapView(guides: Guide.sampleData)
+                HomeMapView()
             }
             Tab("Lägg till", systemImage: "plus", value: 1) {
                 AddGuidesView()

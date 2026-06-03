@@ -12,8 +12,9 @@ struct HomeMapView: View {
     @State private var locationManager = LocationManager()
     @State private var showLocationDeniedAlert = false
     @State private var selectedGuide: Guide?
+    @State private var listViewModel = GuidesListViewModel()
     
-    var guides: [Guide]
+//    var guides: [Guide]
     
     // Initial map region centered over Sweden
     // Latitude and longitude set the center point of the map
@@ -33,11 +34,14 @@ struct HomeMapView: View {
     
     var body: some View {
         Map(position: $cameraPosition, selection: $selectedGuide) {
-            ForEach(guides) { guide in
+            ForEach(listViewModel.guides) { guide in
                 Marker(guide.title, coordinate: guide.coordinates)
                     .tag(guide)
             }
             UserAnnotation()
+        }
+        .task {
+            await listViewModel.loadGuides()
         }
         .mapStyle(.hybrid)
         .overlay(alignment: .bottomTrailing) {
@@ -112,5 +116,5 @@ struct HomeMapView: View {
 }
 
 #Preview {
-    HomeMapView(guides: Guide.sampleData)
+    HomeMapView()
 }
