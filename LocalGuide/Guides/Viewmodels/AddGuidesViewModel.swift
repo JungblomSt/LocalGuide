@@ -10,16 +10,26 @@ import CoreLocation
 import Observation
 import _PhotosUI_SwiftUI
 import UIKit
+import FirebaseAuth
 
 
 @Observable
 class AddGuideViewModel {
+    private let auth: AuthService
+    
+    init(auth: AuthService){
+        self.auth = auth
+    }
+    
     var title: String = ""
     var city: String = ""
     var description: String = ""
     
     var imageURL: String? = nil
     var isUploadingImage: Bool = false
+
+    var audioURL: String? = nil
+    var isUploadingAudio: Bool = false
     
     var tempLocation: CLLocationCoordinate2D?
     let locationManager = LocationManager()
@@ -42,6 +52,17 @@ class AddGuideViewModel {
         }
     }
     
+    func uploadAudio(_ localURL: URL) async {
+        isUploadingAudio = true
+        do {
+            let url = try await StorageService.shared.saveAudioAndGetURL(localURL: localURL)
+            audioURL = url
+        } catch {
+            print("Fel vid ljuduppladdning: \(error.localizedDescription)")
+        }
+        isUploadingAudio = false
+    }
+
     func uploadImage(_ image: UIImage) async {
         isUploadingImage = true
         do {
@@ -59,6 +80,7 @@ class AddGuideViewModel {
         
         guard validate() else { return }
         guard let location = tempLocation else { return }
+        guard let uid = auth.currentUser?.uid else { return }
         
         let newGuide = Guide(
             id: UUID().uuidString,
@@ -68,7 +90,9 @@ class AddGuideViewModel {
             description: description,
             longitude: location.longitude,
             latitude: location.latitude,
-            image: imageURL
+            image: imageURL,
+            createdBy: uid,
+            audioURL: audioURL
         )
         
         try await GuideService.shared.uploadGuide(guide: newGuide)
@@ -83,10 +107,12 @@ class AddGuideViewModel {
         city = ""
         category = .other
         imageURL = nil
+        audioURL = nil
         titleError = nil
         descriptionError = nil
         locationError = nil
         isUploadingImage = false
+        isUploadingAudio = false
     }
     
     func validateTextField(_ text: String, maxLength: Int) -> String? {

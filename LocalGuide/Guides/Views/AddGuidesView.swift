@@ -11,13 +11,26 @@ import PhotosUI
 
 struct AddGuidesView: View {
 
-    @State private var viewModel = AddGuideViewModel()
+    @State private var viewModel: AddGuideViewModel
+    
+    init(auth: AuthService) {
+        _viewModel = State(
+            initialValue: AddGuideViewModel(auth: auth)
+        )
+    }
+    
     @State private var showPublishedAlert: Bool = false
     @State private var showMapPicker: Bool = false
     
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var tempImage: UIImage? = nil
     @State private var isLoadingImage: Bool = false
+    
+    @State private var showCamera: Bool = false
+    @State private var capturedImage: UIImage?
+
+    @State private var selectedAudioURL: URL? = nil
+    @State private var showAudioPicker: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -28,13 +41,23 @@ struct AddGuidesView: View {
                     locationSelection
                     categorySelection
                     imagePicker
+                    audioPicker
                     descriptionInput
                     uploadButton
+                    
                 }
+                .scrollDismissesKeyboard(.interactively)
+
                 .navigationTitle(Text("Dela en guidning"))
                 .navigationBarTitleDisplayMode(.inline)
                 .sheet(isPresented: $showMapPicker) {
                     MapLocationPickerView(selectedLocation: $viewModel.tempLocation)
+                }
+                .sheet(isPresented: $showCamera) {
+                    CameraPicker { image in
+                        capturedImage = image
+                        Task { await viewModel.uploadImage(image) }
+                    }
                 }
             }
         }
@@ -120,42 +143,35 @@ struct AddGuidesView: View {
     
     private var imagePicker: some View {
         Section {
-            HStack {
+            HStack(spacing: 12) {
                 PhotosPicker(selection: $selectedItem, matching: .images, photoLibrary: .shared()) {
-                    HStack {
-                        Image(systemName: "folder.fill")
-                        Text("Välj en bild")
-                        
-                    }
-                    .frame(maxWidth: .infinity)
+                    Label("Välj en bild", systemImage: "folder.fill")
+                        .frame(maxWidth: .infinity)
                 }
-                
-//                // Aktivera när det är dags för "ta foto logik" prioriteras ned pga ej möjlighet att testa
-//                Divider()
-//                
-//                Button{
-//                // TODO: Ta ett fote logik
-//                }label: {
-//                    HStack {
-//                        Image(systemName: "camera.fill")
-//                        Text("Ta en bild")
-//                    }
-//                    .frame(maxWidth: .infinity)
-//                }
+                .buttonStyle(.bordered)
+
+                Button {
+                    showCamera = true
+                } label: {
+                    Label("Ta ett foto", systemImage: "camera")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
             }
-            
-            // Visa vald bild
-            if let image = tempImage {
+
+            // Visa vald bild (från galleri ELLER kamera)
+            if let image = tempImage ?? capturedImage {
                 VStack(alignment: .leading, spacing: 8) {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFill()
                         .frame(height: 200)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
-                    
+
                     Button(role: .destructive) {
                         tempImage = nil
                         selectedItem = nil
+                        capturedImage = nil
                     } label: {
                         Label("Ta bort bild", systemImage: "trash")
                             .font(.caption)
@@ -168,9 +184,55 @@ struct AddGuidesView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            
+
+            if viewModel.isUploadingImage {
+                ProgressView("Laddar upp bild…")
+            }
         } header: {
             Text("Bild")
+        }
+    }
+
+    // MARK: Ljud
+
+    private var audioPicker: some View {
+        Section {
+            Button {
+                showAudioPicker = true
+            } label: {
+                HStack {
+                    Image(systemName: "folder.fill")
+                    Text("Välj en ljudfil")
+                }
+                .frame(maxWidth: .infinity)
+            }
+
+            if let url = selectedAudioURL {
+                HStack {
+                    Image(systemName: "waveform")
+                    Text(url.lastPathComponent)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button(role: .destructive) {
+                        selectedAudioURL = nil
+                    } label: {
+                        Image(systemName: "trash")
+                            .font(.caption)
+                    }
+                }
+            }
+        } header: {
+            Text("Ljud")
+        }
+        .fileImporter(
+            isPresented: $showAudioPicker,
+            allowedContentTypes: [.audio, .mp3],
+            allowsMultipleSelection: false
+        ) { result in
+            if let url = try? result.get().first {
+                selectedAudioURL = url
+            }
         }
     }
 
@@ -205,19 +267,25 @@ struct AddGuidesView: View {
                         if let image = tempImage {
                             await viewModel.uploadImage(image)
                         }
-                        
+
+                        if let audioURL = selectedAudioURL {
+                            await viewModel.uploadAudio(audioURL)
+                        }
+
                         // Spara guiden
                         try await viewModel.saveGuide()
                         viewModel.reset()
                         tempImage = nil
                         selectedItem = nil
+                        selectedAudioURL = nil
+                        capturedImage = nil
                         showPublishedAlert = true
                     }
                 }
             } label: {
                 HStack {
                     Spacer()
-                    if viewModel.isUploadingImage {
+                    if viewModel.isUploadingImage || viewModel.isUploadingAudio {
                         ProgressView()
                             .progressViewStyle(.circular)
                         Text("Publicerar...")
@@ -227,7 +295,7 @@ struct AddGuidesView: View {
                     Spacer()
                 }
             }
-            .disabled(viewModel.isUploadingImage)
+            .disabled(viewModel.isUploadingImage || viewModel.isUploadingAudio)
         }
         .onChange(of: selectedItem) { oldValue, newValue in
             Task {
@@ -246,7 +314,10 @@ struct AddGuidesView: View {
             Button("OK", role: .cancel) { }
         }
     }
+    
 }
+
+
 
 // MARK: - Map picker
 
@@ -295,6 +366,6 @@ struct MapLocationPickerView: View {
 }
 
 #Preview {
-    AddGuidesView()
+    AddGuidesView(auth: AuthService())
 }
 

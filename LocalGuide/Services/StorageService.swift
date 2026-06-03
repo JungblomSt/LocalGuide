@@ -12,11 +12,15 @@ import UIKit
 final class StorageService {
     static let shared = StorageService()
     private init() {}
-  
+
     private let storage = Storage.storage().reference()
-    
+
     private var guideImagesReference: StorageReference {
         storage.child("guide_images")
+    }
+
+    private var guideAudioReference: StorageReference {
+        storage.child("guide_audio")
     }
     
     /// Sparar bildata direkt till Firebase Storage och returnerar sökväg + filnamn
@@ -60,6 +64,22 @@ final class StorageService {
     func saveImageAndGetURL(image: UIImage) async throws -> String {
         let (path, _) = try await saveImage(image: image)  // Ignorerar name-värdet med _
         let url = try await getDownloadURL(path: path)
+        return url.absoluteString
+    }
+
+    func saveAudioAndGetURL(localURL: URL) async throws -> String {
+        let meta = StorageMetadata()
+        meta.contentType = "audio/mpeg"
+
+        let path = "\(UUID().uuidString).mp3"
+        let data = try Data(contentsOf: localURL)
+        let returnedMetaData = try await guideAudioReference.child(path).putDataAsync(data, metadata: meta)
+
+        guard let returnedPath = returnedMetaData.path else {
+            throw URLError(.badServerResponse)
+        }
+
+        let url = try await guideAudioReference.child(returnedPath.components(separatedBy: "/").last ?? path).downloadURL()
         return url.absoluteString
     }
 }

@@ -8,7 +8,18 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @State private var viewModel = ProfileViewModel()
+    private let auth: AuthService
+    @State private var viewModel: ProfileViewModel
+
+    init(auth: AuthService, userRepository: UserRepository) {
+        self.auth = auth
+        _viewModel = State(
+            initialValue: ProfileViewModel(
+                auth: auth,
+                userRepository: userRepository
+            )
+        )
+    }
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
@@ -23,6 +34,24 @@ struct ProfileView: View {
                     Text(viewModel.username)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+
+                    if !viewModel.bio.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Bio")
+                                .font(.headline)
+
+                            Text(viewModel.bio)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .background(.thinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .padding(.horizontal)
+
+                    }
                 }
 
                 VStack(spacing: 12) {
@@ -58,6 +87,20 @@ struct ProfileView: View {
             }
             .padding()
             .navigationTitle("Profil")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        ProfileSettingsView(auth: auth)
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                }
+            }
+            // Loads the user's profile when the profile screen appears
+            .task {
+                await viewModel.loadProfile()
+                viewModel.loadSharedGuides()
+            }
         }
     }
 
@@ -81,5 +124,8 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView()
+    ProfileView(
+        auth: AuthService(),
+        userRepository: UserRepository()
+    )
 }

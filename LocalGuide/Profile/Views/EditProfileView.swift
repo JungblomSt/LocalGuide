@@ -17,18 +17,25 @@ struct EditProfileView: View {
                     TextField("Användarnamn", text: $viewModel.username)
 
                     Button("Spara") {
-                        // Firebase update will be added later.
+                        Task {
+                            await viewModel.updateUsername()
+                        }
                     }
                     .buttonStyle(.borderedProminent)
                 }
             }
-            Section("Inställningar") {
-                Button {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
+            Section("Bio") {
+                TextEditor(text: $viewModel.bio)
+                    .frame(minHeight: 100)
+                HStack {
+                    Spacer()
+                    
+                    Button("Spara") {
+                        Task {
+                            await viewModel.updateBio()
+                        }
                     }
-                } label: {
-                    Label("Öppna appinställningar", systemImage: "gear")
+                    .buttonStyle(.borderedProminent)
                 }
             }
         }
@@ -38,6 +45,11 @@ struct EditProfileView: View {
 
 #Preview {
     NavigationStack {
-        EditProfileView(viewModel: ProfileViewModel())
+        EditProfileView(
+            viewModel: ProfileViewModel(
+                auth: AuthService(),
+                userRepository: UserRepository()
+            )
+        )
     }
 }

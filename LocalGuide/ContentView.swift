@@ -29,13 +29,13 @@ struct ContentView: View {
                 HomeMapView()
             }
             Tab("Lägg till", systemImage: "plus", value: 1) {
-                AddGuidesView()
+                AddGuidesView(auth: auth)
             }
             Tab("Lista", systemImage: "list.bullet", value: 2) {
                 GuideListView()
             }
             Tab("Profil", systemImage: "person", value: 3) {
-                ProfileView()
+                ProfileView(auth: auth, userRepository: userRepository)
             }
         }
         .onChange(of: selectedTab) {

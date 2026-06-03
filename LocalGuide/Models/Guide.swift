@@ -17,12 +17,13 @@ struct Guide: Identifiable, Hashable, Codable {
     var latitude: Double
     var imageURL: String?
     var audioURL: String?
+    var createdBy: String?
     
     var coordinates: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
     
-    init (id: String, title: String, city: String, category: String, description: String, longitude: Double, latitude: Double, image: String? = nil, audioURL: String? = nil) {
+    init (id: String, title: String, city: String, category: String, description: String, longitude: Double, latitude: Double, image: String? = nil, audioURL: String? = nil, createdBy: String? = nil) {
         self.id = UUID(uuidString: id) ?? UUID ()
         self.title = title
         self.city = city
@@ -32,6 +33,7 @@ struct Guide: Identifiable, Hashable, Codable {
         self.latitude = latitude
         self.imageURL = image
         self.audioURL = audioURL
+        self.createdBy = createdBy
     }
 }
 enum Category: String, CaseIterable, Identifiable {
