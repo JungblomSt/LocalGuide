@@ -60,6 +60,10 @@ final class StorageService {
         try await guideImagesReference.child(path).data(maxSize: 10 * 1024 * 1024)
     }
 
+    func getAudioData(path: String) async throws -> Data {
+        try await guideAudioReference.child(path).data(maxSize: 50 * 1024 * 1024)
+    }
+
     /// Kombinationsfunktion: sparar bilden OCH returnerar en färdig URL-sträng direkt
     func saveImageAndGetURL(image: UIImage) async throws -> String {
         let (path, _) = try await saveImage(image: image)  // Ignorerar name-värdet med _
