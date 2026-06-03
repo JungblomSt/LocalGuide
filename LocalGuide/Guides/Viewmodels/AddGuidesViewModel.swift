@@ -91,7 +91,7 @@ class AddGuideViewModel {
             longitude: location.longitude,
             latitude: location.latitude,
             image: imageURL,
-            createdBy: uid
+            createdBy: uid,
             audioURL: audioURL
         )
         
