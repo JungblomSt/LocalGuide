@@ -59,7 +59,7 @@ final class StorageService {
     func getData(path: String) async throws -> Data {
         try await guideImagesReference.child(path).data(maxSize: 10 * 1024 * 1024)
     }
-
+    /// same as above but audio + max 50MG
     func getAudioData(path: String) async throws -> Data {
         try await guideAudioReference.child(path).data(maxSize: 50 * 1024 * 1024)
     }
