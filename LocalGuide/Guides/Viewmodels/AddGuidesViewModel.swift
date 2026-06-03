@@ -91,8 +91,8 @@ class AddGuideViewModel {
             longitude: location.longitude,
             latitude: location.latitude,
             image: imageURL,
-            createdBy: uid,
-            audioURL: audioURL
+            audioURL: audioURL,
+            createdBy: uid
         )
         
         try await GuideService.shared.uploadGuide(guide: newGuide)
