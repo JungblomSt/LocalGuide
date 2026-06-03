@@ -52,7 +52,7 @@ final class StorageService {
 
     /// Hämtar en nedladdningsbar URL från Firebase för en given lagringsväg
     func getDownloadURL(path: String) async throws -> URL {
-        try await guideImagesReference.child(path).downloadURL()
+        try await storage.child(path).downloadURL()
     }
 
     /// Hämtar själva bilddatan från Firebase, max 10MB
@@ -79,7 +79,7 @@ final class StorageService {
             throw URLError(.badServerResponse)
         }
 
-        let url = try await guideAudioReference.child(returnedPath.components(separatedBy: "/").last ?? path).downloadURL()
+        let url = try await storage.child(returnedPath.components(separatedBy: "/").last ?? path).downloadURL()
         return url.absoluteString
     }
 }
