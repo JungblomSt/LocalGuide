@@ -1,9 +1,3 @@
-//
-//  GuideListView.swift
-//  LocalGuide
-//
-//  Created by neda khalajnejad on 2026-05-19.
-//
 
 
 import SwiftUI
@@ -11,17 +5,14 @@ import CoreLocation
 
 struct GuideListView: View {
 
-    private let userLocation = CLLocation(latitude: 59.3293, longitude: 18.0686)
-
-    @State private var guides: [Guide] = []                // ← filled from Firestore
-    @State private var searchText: String = ""             // ← filter: free text
-    @State private var selectedCategory: Category? = nil   // ← filter: category (nil = all)
-    @State private var maxDistanceKm: Double? = nil        // ← filter: max distance (nil = unlimited)
+    @State private var viewModel = GuidesListViewModel()
+    @State private var searchText: String = ""
+    @State private var selectedCategory: Category? = nil
+    @State private var maxDistanceKm: Double? = nil
 
     private var filteredGuides: [Guide] {
-        var result = guides
+        var result = viewModel.sortedGuides
 
-        // 1) free-text search
         if !searchText.isEmpty {
             let q = searchText.lowercased()
             result = result.filter {
@@ -31,21 +22,18 @@ struct GuideListView: View {
             }
         }
 
-        // 2) category
         if let selectedCategory {
             result = result.filter { $0.category == selectedCategory.rawValue }
         }
 
-        // 3) max distance
         if let maxDistanceKm {
             let maxMeters = maxDistanceKm * 1000
-            result = result.filter { $0.distance(from: userLocation) <= maxMeters }
+            result = result.filter {
+                $0.distance(from: viewModel.userLocation ?? CLLocation()) <= maxMeters
+            }
         }
 
-        // 4) sort by distance (nearest first)
-        return result.sorted {
-            $0.distance(from: userLocation) < $1.distance(from: userLocation)
-        }
+        return result
     }
 
     var body: some View {
@@ -53,40 +41,47 @@ struct GuideListView: View {
             VStack(spacing: 0) {
                 filterBar
 
-                List(filteredGuides) { guide in
-                    NavigationLink {
-                        GuideDetailView(guide: guide)
-                    } label: {
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Text(guide.title)
-                                Spacer()
-                                Text(guide.city)
-                                Spacer()
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let error = viewModel.errorMessage {
+                    Text(error)
+                } else {
+                    List(filteredGuides) { guide in
+                        NavigationLink {
+                            GuideDetailView(guide: guide)
+                        } label: {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Text(guide.title)
+                                    Spacer()
+                                    Text(guide.city)
+                                }
+                                .font(.headline)
+                                Text(guide.description)
+                                    .font(.subheadline)
+                                    .lineLimit(2)
+                                if let location = viewModel.userLocation {
+                                    Text("\(guide.distance(from: location) / 1000, specifier: "%.2f") km bort")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
                             }
-                            .font(.headline)
-                            Text(guide.description)
-                                .font(.subheadline)
-                                .lineLimit(2)
-                            Text("\(guide.distance(from: userLocation) / 1000, specifier: "%.2f") km bort")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                            .padding()
                         }
-                        .padding(.vertical, 4)
                     }
-                }
-                .overlay {
-                    if filteredGuides.isEmpty && !guides.isEmpty {
-                        ContentUnavailableView.search
+                    .overlay {
+                        if filteredGuides.isEmpty && !viewModel.sortedGuides.isEmpty {
+                            ContentUnavailableView.search
+                        }
                     }
                 }
             }
             .navigationTitle("Nära mig")
-            .onAppear {
-                GuideService.shared.fetchGuides { fetched in
-                    self.guides = fetched
-                }
-            }
+        }
+        .task {
+            viewModel.locationManager.requestLocationAccess()
+            await viewModel.loadGuides()
         }
     }
 

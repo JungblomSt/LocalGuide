@@ -26,34 +26,10 @@ final class GuideService {
             merge: false
         )
     }
-
-    func fetchGuides(completion: @escaping ([Guide]) -> Void) {
-        self.guidesCollection.getDocuments { (querySnapshot, error) in
-            if let error = error {
-                print("Error getting documents: \(error)")
-                completion([])
-            } else {
-                Task { @MainActor in
-                    var guides: [Guide] = []
-
-                    guard let documents = querySnapshot?.documents else {
-                        completion([])
-                        return
-                    }
-
-                    for document in documents {
-                        do {
-                            let guide = try document.data(as: Guide.self)
-                            guides.append(guide)
-                        } catch {
-                            print("Error decoding guide: \(error)")
-                        }
-                    }
-
-                    completion(guides)
-                }
-            }
-        }
+    
+    func fetchGuides() async throws -> [Guide] {
+        let snapshot = try await guidesCollection.getDocuments()
+        return try snapshot.documents.map { try $0.data(as: Guide.self) }
     }
 
     /// Fetches guides created by a specific user.
