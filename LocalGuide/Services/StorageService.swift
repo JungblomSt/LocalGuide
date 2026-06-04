@@ -59,9 +59,10 @@ final class StorageService {
     func getData(path: String) async throws -> Data {
         try await guideImagesReference.child(path).data(maxSize: 10 * 1024 * 1024)
     }
+    
     /// same as above but audio + max 50MG
     func getAudioData(path: String) async throws -> Data {
-        try await guideAudioReference.child(path).data(maxSize: 50 * 1024 * 1024)
+        try await storage.child(path).data(maxSize: 50 * 1024 * 1024)
     }
 
     /// Kombinationsfunktion: sparar bilden OCH returnerar en färdig URL-sträng direkt
@@ -71,20 +72,23 @@ final class StorageService {
         return url.absoluteString
     }
 
-    func saveAudioAndGetURL(localURL: URL) async throws -> String {
+    func saveGuideAudio(data: Data) async throws -> (Path: String, Name: String) {
         let meta = StorageMetadata()
         meta.contentType = "audio/mpeg"
 
         let path = "\(UUID().uuidString).mp3"
-        let data = try Data(contentsOf: localURL)
+
         let returnedMetaData = try await guideAudioReference.child(path).putDataAsync(data, metadata: meta)
 
-        guard let returnedPath = returnedMetaData.path else {
+        guard let returnedPath = returnedMetaData.path, let returnedName = returnedMetaData.name else {
             throw URLError(.badServerResponse)
         }
+        return (returnedPath, returnedName)
+    }
 
-        let url = try await storage.child(returnedPath.components(separatedBy: "/").last ?? path).downloadURL()
-        return url.absoluteString
+    func saveAudio(localURL: URL) async throws -> (Path: String, Name: String) {
+        let data = try Data(contentsOf: localURL)
+        return try await saveGuideAudio(data: data)
     }
 }
 
