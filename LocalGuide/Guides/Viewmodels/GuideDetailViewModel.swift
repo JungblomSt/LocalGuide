@@ -3,8 +3,9 @@ import Foundation
 @Observable
 class GuideDetailViewModel {
     private let audioPlayer = AudioPlayerManager()
-    let guide: Guide
+    var guide: Guide
 
+    var isSaved = false
     var isPlaying: Bool { audioPlayer.isPlaying }
     var isAudioLoaded: Bool { audioPlayer.isLoaded }
     var currentTime: TimeInterval { audioPlayer.currentTime }
@@ -13,6 +14,19 @@ class GuideDetailViewModel {
 
     init(guide: Guide) {
         self.guide = guide
+    }
+    
+    func toggleSaved() {
+        isSaved.toggle()
+    }
+    
+    /// Uppdatera lokal data med uppdaterad guide från firestore
+    func refresh() async {
+        do {
+            guide = try await GuideService.shared.fetchGuide(id: guide.id.uuidString)
+        } catch {
+            print("Fel vid hämtning av guide: \(error)")
+        }
     }
 
     func toggleAudio() {
