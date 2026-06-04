@@ -81,17 +81,6 @@ struct GuideDetailView: View {
 
 extension GuideDetailView {
     
-//    private var editButton: some View {
-//        if viewModel.guide.createdBy == UserProfile.ID {
-//            NavigationLink(destination: EditGuideView(guide: viewModel.guide)) {
-//                Image(systemName: "square.and.pencil")
-//            }
-//        }
-//        
-//    }
-
-    
-    
     private var imageSection: some View {
         VStack {
             if let urlString = viewModel.guide.imageURL {
