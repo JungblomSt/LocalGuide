@@ -65,6 +65,29 @@ final class StorageService {
         try await storage.child(path).data(maxSize: 50 * 1024 * 1024)
     }
 
+    /// Mapp på disk där nedladdat ljud cachas
+    private var audioCacheDirectory: URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("guide_audio", isDirectory: true)
+    }
+
+    /// Hämtar ljuddata med disk-cache: laddar bara ner från Firebase första gången.
+    func cachedAudioData(path: String) async throws -> Data {
+        // Gör om lagringsvägen till ett säkert filnamn (guide_audio/<uuid>.mp3 > guide_audio_<uuid>.mp3)
+        let fileURL = audioCacheDirectory.appendingPathComponent(path.replacingOccurrences(of: "/", with: "_"))
+
+        // Cache-träff: returnera direkt, ingen nedladdning
+        if let cached = try? Data(contentsOf: fileURL) {
+            return cached
+        }
+
+        // ladda ner audio om cach inte finns
+        let data = try await getAudioData(path: path)
+        try? FileManager.default.createDirectory(at: audioCacheDirectory, withIntermediateDirectories: true)
+        try? data.write(to: fileURL)
+        return data
+    }
+
     /// Kombinationsfunktion: sparar bilden OCH returnerar en färdig URL-sträng direkt
     func saveImageAndGetURL(image: UIImage) async throws -> String {
         let (path, _) = try await saveImage(image: image)  // Ignorerar name-värdet med _
