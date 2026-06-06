@@ -10,9 +10,12 @@ import CoreLocation
 import MapKit
 
 struct GuideDetailView: View {
-
+    @Environment(AuthService.self) private var auth
+    @Environment(UserRepository.self) private var userRepository
+    
     @State private var viewModel: GuideDetailViewModel
-
+    @State private var favoritesViewModel: FavoritesViewModel?
+    
     init(guide: Guide) {
         _viewModel = State(initialValue: GuideDetailViewModel(guide: guide))
     }
@@ -39,18 +42,43 @@ struct GuideDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    viewModel.toggleSaved()
+                    Task {
+                        if favoritesViewModel == nil {
+                            favoritesViewModel = FavoritesViewModel(
+                                auth: auth,
+                                userRepository: userRepository
+                            )
+                        }
+
+                        await favoritesViewModel?.toggleSaved(viewModel.guide)
+                    }
                 } label: {
-                    Image(systemName: viewModel.isSaved ? "heart.fill" : "heart")
-                        .foregroundStyle(viewModel.isSaved ? .red : .primary)
+                    let isSaved = favoritesViewModel?.isSaved(viewModel.guide) ?? false
+                    
+                    Image(systemName: isSaved ? "heart.fill" : "heart")
+                        .foregroundStyle(isSaved ? .red : .primary)
                 }
             }
+        }
+        .task {
+            if favoritesViewModel == nil {
+                favoritesViewModel = FavoritesViewModel(
+                    auth: auth,
+                    userRepository: userRepository
+                )
+            }
+
+            await favoritesViewModel?.loadSavedGuides()
         }
     }
 }
 
 #Preview {
+    let auth = AuthService()
+    let userRepository = UserRepository()
     GuideDetailView(guide: Guide.sampleData[0])
+        .environment(auth)
+        .environment(userRepository)
         .environment(LocationManager())
 }
 

@@ -38,6 +38,8 @@ struct ContentView: View {
                 ProfileView(auth: auth, userRepository: userRepository)
             }
         }
+        .environment(auth)
+        .environment(userRepository)
         .onChange(of: selectedTab) {
             if Int.random(in: 1...1000) == 1,
                let url = Bundle.main.url(forResource: "lsw3_07", withExtension: "mp3") {
