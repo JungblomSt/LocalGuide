@@ -15,7 +15,7 @@ final class ProfileViewModel {
     var username: String = "Användarnamn"
     /// Stores the current user's profile bio
     var bio: String = ""
-    var savedGuides: [Guide] = Guide.sampleData
+    var savedGuides: [Guide] = []
     var sharedGuides: [Guide] = []
     /// Stores an error message when profile data cannot be loaded or updated
     var errorMessage: String?
@@ -83,16 +83,22 @@ final class ProfileViewModel {
             errorMessage = "Kunde inte uppdatera bio."
         }
     }
+    /// Loads guides saved by the current user from Firestore.
+    func loadSavedGuides() async {
+        guard let uid = auth.currentUser?.uid else {
+            errorMessage = "Ingen inloggad användare hittades."
+            return
+        }
 
-    func isSaved(_ guide: Guide) -> Bool {
-        savedGuides.contains { $0.id == guide.id }
-    }
+        do {
+            let savedGuideIds = try await userRepository.fetchSavedGuideIds(uid: uid)
+            let allGuides = try await GuideService.shared.fetchGuides()
 
-    func toggleSaved(_ guide: Guide) {
-        if isSaved(guide) {
-            savedGuides.removeAll { $0.id == guide.id }
-        } else {
-            savedGuides.append(guide)
+            savedGuides = allGuides.filter { guide in
+                savedGuideIds.contains(guide.id.uuidString)
+            }
+        } catch {
+            errorMessage = "Kunde inte hämta sparade guider."
         }
     }
     
