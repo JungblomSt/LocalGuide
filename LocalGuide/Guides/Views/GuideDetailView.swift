@@ -10,10 +10,13 @@
 import SwiftUI
 import CoreLocation
 import MapKit
+import FirebaseAuth
 
 struct GuideDetailView: View {
 
     @State private var viewModel: GuideDetailViewModel
+    @Environment(AuthService.self) private var authService
+    @State private var needsUppdate = false
 
     init(guide: Guide) {
         _viewModel = State(initialValue: GuideDetailViewModel(guide: guide))
@@ -37,18 +40,50 @@ struct GuideDetailView: View {
                 reviewsListSection
             }
         }
+
         .ignoresSafeArea(edges: .top)
         .scrollDismissesKeyboard(.interactively) 
         .task {
             await viewModel.loadReviews()
+        .toolbar {
+            // Edit Guide
+            if authService.currentUser?.uid == viewModel.guide.createdBy {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        AddGuidesView(auth: authService, guideToEdit: viewModel.guide)
+                            .onDisappear {
+                                needsUppdate.toggle()
+                            }
+                    } label: {
+                        Image(systemName: "square.and.pencil")
+                    }
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    viewModel.toggleSaved()
+                } label: {
+                    Image(systemName: viewModel.isSaved ? "heart.fill" : "heart")
+                        .foregroundStyle(viewModel.isSaved ? .red : .primary)
+                }
+            }
+        }
+        .onChange(of: needsUppdate) {
+            if needsUppdate {
+                Task { await viewModel.refresh() }
+                needsUppdate = false
+            }
         }
     }
 }
 
 #Preview {
-    GuideDetailView(guide: Guide.sampleData[0])
-        .environment(LocationManager())
+    NavigationStack {
+        GuideDetailView(guide: Guide.sampleData[0])
+            .environment(AuthService())
+    }
 }
+
 
 extension GuideDetailView {
 
@@ -68,8 +103,9 @@ extension GuideDetailView {
                     case .failure:
                         Image(systemName: "photo")
                             .resizable()
-                            .frame(height: 300)
                             .scaledToFill()
+                            .frame(height: 300)
+                            .clipped()
                     case .empty:
                         ProgressView()
                             .frame(height: 300)
@@ -80,12 +116,12 @@ extension GuideDetailView {
             } else {
                 Image(systemName: "photo")
                     .resizable()
+                    .scaledToFill()
                     .frame(height: 300)
-                    .scaledToFit()
+                    .clipped()
             }
         }
         .frame(height: 300)
-        .tabViewStyle(PageTabViewStyle())
         .shadow(radius: 20, x: 0, y: 10)
     }
 

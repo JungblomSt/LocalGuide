@@ -4,8 +4,9 @@ import FirebaseAuth
 @Observable
 class GuideDetailViewModel {
     private let audioPlayer = AudioPlayerManager()
-    let guide: Guide
+    var guide: Guide
 
+    var isSaved = false
     // MARK: - Audio
     /// True medan ljudet laddas ner från Firebase Storage första gången
     var isLoadingAudio = false
@@ -34,6 +35,19 @@ class GuideDetailViewModel {
 
     init(guide: Guide) {
         self.guide = guide
+    }
+    
+    func toggleSaved() {
+        isSaved.toggle()
+    }
+    
+    /// Uppdatera lokal data med uppdaterad guide från firestore
+    func refresh() async {
+        do {
+            guide = try await GuideService.shared.fetchGuide(id: guide.id.uuidString)
+        } catch {
+            print("Fel vid hämtning av guide: \(error)")
+        }
     }
 
     func toggleAudio() {

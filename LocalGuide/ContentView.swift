@@ -18,6 +18,7 @@ struct ContentView: View {
     var body: some View {
         if auth.isSignedIn {
             mainTabView
+                .environment(auth)
         } else {
             LoginView(auth: auth, userRepository: userRepository)
         }

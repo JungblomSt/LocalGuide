@@ -74,7 +74,9 @@ struct HomeMapView: View {
             Text("Aktivera platsåtkomst för LocalGuide i Inställningar för att kunna centrera kartan på din position.")
         }
         .sheet(item: $selectedGuide) {guide in
-            GuideDetailView(guide: guide)
+            NavigationStack {
+                GuideDetailView(guide: guide)
+            }
         }
         .onAppear {
             locationManager.requestLocationAccess()
