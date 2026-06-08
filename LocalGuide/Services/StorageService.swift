@@ -59,6 +59,34 @@ final class StorageService {
     func getData(path: String) async throws -> Data {
         try await guideImagesReference.child(path).data(maxSize: 10 * 1024 * 1024)
     }
+    
+    /// same as above but audio + max 50MG
+    func getAudioData(path: String) async throws -> Data {
+        try await storage.child(path).data(maxSize: 50 * 1024 * 1024)
+    }
+
+    /// Mapp på disk där nedladdat ljud cachas
+    private var audioCacheDirectory: URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("guide_audio", isDirectory: true)
+    }
+
+    /// Hämtar ljuddata med disk-cache: laddar bara ner från Firebase första gången.
+    func cachedAudioData(path: String) async throws -> Data {
+        // Gör om lagringsvägen till ett säkert filnamn (guide_audio/<uuid>.mp3 > guide_audio_<uuid>.mp3)
+        let fileURL = audioCacheDirectory.appendingPathComponent(path.replacingOccurrences(of: "/", with: "_"))
+
+        // Cache-träff: returnera direkt, ingen nedladdning
+        if let cached = try? Data(contentsOf: fileURL) {
+            return cached
+        }
+
+        // ladda ner audio om cach inte finns
+        let data = try await getAudioData(path: path)
+        try? FileManager.default.createDirectory(at: audioCacheDirectory, withIntermediateDirectories: true)
+        try? data.write(to: fileURL)
+        return data
+    }
 
     /// Kombinationsfunktion: sparar bilden OCH returnerar en färdig URL-sträng direkt
     func saveImageAndGetURL(image: UIImage) async throws -> String {
@@ -67,20 +95,23 @@ final class StorageService {
         return url.absoluteString
     }
 
-    func saveAudioAndGetURL(localURL: URL) async throws -> String {
+    func saveGuideAudio(data: Data) async throws -> (Path: String, Name: String) {
         let meta = StorageMetadata()
         meta.contentType = "audio/mpeg"
 
         let path = "\(UUID().uuidString).mp3"
-        let data = try Data(contentsOf: localURL)
+
         let returnedMetaData = try await guideAudioReference.child(path).putDataAsync(data, metadata: meta)
 
-        guard let returnedPath = returnedMetaData.path else {
+        guard let returnedPath = returnedMetaData.path, let returnedName = returnedMetaData.name else {
             throw URLError(.badServerResponse)
         }
+        return (returnedPath, returnedName)
+    }
 
-        let url = try await storage.child(returnedPath.components(separatedBy: "/").last ?? path).downloadURL()
-        return url.absoluteString
+    func saveAudio(localURL: URL) async throws -> (Path: String, Name: String) {
+        let data = try Data(contentsOf: localURL)
+        return try await saveGuideAudio(data: data)
     }
 }
 

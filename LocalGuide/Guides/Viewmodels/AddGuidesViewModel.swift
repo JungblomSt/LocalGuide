@@ -55,8 +55,8 @@ class AddGuideViewModel {
     func uploadAudio(_ localURL: URL) async {
         isUploadingAudio = true
         do {
-            let url = try await StorageService.shared.saveAudioAndGetURL(localURL: localURL)
-            audioURL = url
+            let (path, _) = try await StorageService.shared.saveAudio(localURL: localURL)
+            audioURL = path
         } catch {
             print("Fel vid ljuduppladdning: \(error.localizedDescription)")
         }

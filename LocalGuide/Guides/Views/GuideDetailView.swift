@@ -103,11 +103,18 @@ extension GuideDetailView {
                     viewModel.toggleAudio()
                 } label: {
                     VStack(spacing: 12) {
-                        Image(systemName: viewModel.isPlaying ? "pause.fill" : "speaker.wave.2.fill")
-                            .font(.largeTitle)
-                        Text(viewModel.isPlaying ? "Pausa" : "Lyssna")
+                        if viewModel.isLoadingAudio {
+                            ProgressView()
+                                .font(.largeTitle)
+                            Text("Laddar...")
+                        } else {
+                            Image(systemName: viewModel.isPlaying ? "pause.fill" : "speaker.wave.2.fill")
+                                .font(.largeTitle)
+                            Text(viewModel.isPlaying ? "Pausa" : "Lyssna")
+                        }
                     }
                 }
+                .disabled(viewModel.isLoadingAudio)
                 .padding(40)
             }
             
