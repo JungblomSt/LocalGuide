@@ -13,8 +13,12 @@ import MapKit
 import FirebaseAuth
 
 struct GuideDetailView: View {
-
+    @Environment(AuthService.self) private var auth
+    @Environment(UserRepository.self) private var userRepository
+    
     @State private var viewModel: GuideDetailViewModel
+    @State private var favoritesViewModel: FavoritesViewModel?
+    
     @Environment(AuthService.self) private var authService
     @State private var needsUppdate = false
 
@@ -73,6 +77,38 @@ struct GuideDetailView: View {
                 Task { await viewModel.refresh() }
                 needsUppdate = false
             }
+        }
+        .ignoresSafeArea()
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    Task {
+                        if favoritesViewModel == nil {
+                            favoritesViewModel = FavoritesViewModel(
+                                auth: auth,
+                                userRepository: userRepository
+                            )
+                        }
+
+                        await favoritesViewModel?.toggleSaved(viewModel.guide)
+                    }
+                } label: {
+                    let isSaved = favoritesViewModel?.isSaved(viewModel.guide) ?? false
+                    
+                    Image(systemName: isSaved ? "heart.fill" : "heart")
+                        .foregroundStyle(isSaved ? .red : .primary)
+                }
+            }
+        }
+        .task {
+            if favoritesViewModel == nil {
+                favoritesViewModel = FavoritesViewModel(
+                    auth: auth,
+                    userRepository: userRepository
+                )
+            }
+
+            await favoritesViewModel?.loadSavedGuides()
         }
     }
 }
