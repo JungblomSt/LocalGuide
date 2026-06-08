@@ -55,16 +55,8 @@ class GuideDetailViewModel {
     
         do {
             let fetched = try await ReviewService.shared.fetchReviews(for: guideId)
-
-            for (i, review) in fetched.enumerated() {
-              
-            }
-
             self.reviews = fetched
-          
-
         } catch {
-            print("❌ [loadReviews] ERROR")
             print("   localizedDescription: \(error.localizedDescription)")
             print("   full error: \(error)")
         }
