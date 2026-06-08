@@ -10,8 +10,7 @@ class GuideDetailViewModel {
     // MARK: - Audio
     /// True medan ljudet laddas ner från Firebase Storage första gången
     var isLoadingAudio = false
-
-    var isSaved = false
+    
     var isPlaying: Bool { audioPlayer.isPlaying }
     var isAudioLoaded: Bool { audioPlayer.isLoaded }
     var currentTime: TimeInterval { audioPlayer.currentTime }
@@ -49,10 +48,6 @@ class GuideDetailViewModel {
         } catch {
             print("Fel vid hämtning av guide: \(error)")
         }
-    }
-
-    func toggleSaved() {
-        isSaved.toggle()
     }
     
     func toggleAudio() {
