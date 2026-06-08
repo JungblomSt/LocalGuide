@@ -5,9 +5,12 @@
 //  Created by Stina Thun on 2026-05-20.
 //
 
+
+
 import SwiftUI
 import CoreLocation
 import MapKit
+import FirebaseAuth
 
 struct GuideDetailView: View {
     @Environment(AuthService.self) private var auth
@@ -16,15 +19,13 @@ struct GuideDetailView: View {
     @State private var viewModel: GuideDetailViewModel
     @State private var favoritesViewModel: FavoritesViewModel?
     
+    @Environment(AuthService.self) private var authService
+    @State private var needsUppdate = false
+
     init(guide: Guide) {
         _viewModel = State(initialValue: GuideDetailViewModel(guide: guide))
     }
 
-///    aktivera om man vill kunna se avståndet även i detaljvyn
-//    @State private var locationManager = LocationManager()
-//
-//    private let userLocation = CLLocation(latitude: 59.3293, longitude: 18.0686)
-    
     var body: some View {
         ScrollView {
             VStack {
@@ -34,8 +35,47 @@ struct GuideDetailView: View {
                     audioProgressSection
                 }
                 Divider()
+                averageSection
                 descriptionSection
                 mapSection
+                Divider()
+                myReviewSection
+                Divider()
+                reviewsListSection
+            }
+        }
+
+        .ignoresSafeArea(edges: .top)
+        .scrollDismissesKeyboard(.interactively) 
+        .task {
+            await viewModel.loadReviews()
+        .toolbar {
+            // Edit Guide
+            if authService.currentUser?.uid == viewModel.guide.createdBy {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        AddGuidesView(auth: authService, guideToEdit: viewModel.guide)
+                            .onDisappear {
+                                needsUppdate.toggle()
+                            }
+                    } label: {
+                        Image(systemName: "square.and.pencil")
+                    }
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    viewModel.toggleSaved()
+                } label: {
+                    Image(systemName: viewModel.isSaved ? "heart.fill" : "heart")
+                        .foregroundStyle(viewModel.isSaved ? .red : .primary)
+                }
+            }
+        }
+        .onChange(of: needsUppdate) {
+            if needsUppdate {
+                Task { await viewModel.refresh() }
+                needsUppdate = false
             }
         }
         .ignoresSafeArea()
@@ -74,21 +114,20 @@ struct GuideDetailView: View {
 }
 
 #Preview {
-    let auth = AuthService()
-    let userRepository = UserRepository()
-    GuideDetailView(guide: Guide.sampleData[0])
-        .environment(auth)
-        .environment(userRepository)
-        .environment(LocationManager())
+    NavigationStack {
+        GuideDetailView(guide: Guide.sampleData[0])
+            .environment(AuthService())
+    }
 }
 
+
 extension GuideDetailView {
-    
+
+  
+
     private var imageSection: some View {
         VStack {
-            // TODO: Show Image
             if let urlString = viewModel.guide.imageURL {
-
                 AsyncImage(url: URL(string: urlString)) { phase in
                     switch phase {
                     case .success(let image):
@@ -100,8 +139,9 @@ extension GuideDetailView {
                     case .failure:
                         Image(systemName: "photo")
                             .resizable()
-                            .frame(height: 300)
                             .scaledToFill()
+                            .frame(height: 300)
+                            .clipped()
                     case .empty:
                         ProgressView()
                             .frame(height: 300)
@@ -112,21 +152,18 @@ extension GuideDetailView {
             } else {
                 Image(systemName: "photo")
                     .resizable()
+                    .scaledToFill()
                     .frame(height: 300)
-                    .scaledToFit()
-                
+                    .clipped()
             }
-            
-            
         }
         .frame(height: 300)
-        .tabViewStyle(PageTabViewStyle())
         .shadow(radius: 20, x: 0, y: 10)
     }
-    
+
     private var titleCityAudioSection: some View {
         HStack {
-            VStack (alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(viewModel.guide.title)
                     .font(Font.largeTitle.bold())
                 Text(viewModel.guide.city)
@@ -135,23 +172,29 @@ extension GuideDetailView {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
-            
+
             if viewModel.guide.audioURL != nil {
                 Button {
                     viewModel.toggleAudio()
                 } label: {
                     VStack(spacing: 12) {
-                        Image(systemName: viewModel.isPlaying ? "pause.fill" : "speaker.wave.2.fill")
-                            .font(.largeTitle)
-                        Text(viewModel.isPlaying ? "Pausa" : "Lyssna")
+                        if viewModel.isLoadingAudio {
+                            ProgressView()
+                                .font(.largeTitle)
+                            Text("Laddar...")
+                        } else {
+                            Image(systemName: viewModel.isPlaying ? "pause.fill" : "speaker.wave.2.fill")
+                                .font(.largeTitle)
+                            Text(viewModel.isPlaying ? "Pausa" : "Lyssna")
+                        }
                     }
                 }
+                .disabled(viewModel.isLoadingAudio)
                 .padding(40)
             }
-            
         }
     }
-    
+
     private var audioProgressSection: some View {
         VStack(spacing: 6) {
             Slider(
@@ -182,15 +225,14 @@ extension GuideDetailView {
     }
 
     private var descriptionSection: some View {
-        VStack (alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(viewModel.guide.description)
                 .font(.body)
-
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
     }
-    
+
     private var mapSection: some View {
         Map(initialPosition: .region(MKCoordinateRegion(
             center: viewModel.guide.coordinates,
@@ -200,5 +242,125 @@ extension GuideDetailView {
         }
         .aspectRatio(1, contentMode: .fit)
         .allowsHitTesting(false)
+    }
+
+    // MARK: - Genomsnittligt betyg
+
+    private var averageSection: some View {
+        HStack(spacing: 10) {
+            if viewModel.reviewCount > 0 {
+                Text(String(format: "%.1f", viewModel.averageRating))
+                    .font(.title2.bold())
+                starsDisplay(filledFor: viewModel.averageRating)
+                Text("(\(viewModel.reviewCount) recensioner)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            } else {
+                Text("Inga betyg ännu")
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
+        }
+        .padding(.horizontal)
+    }
+
+    // MARK: - Lämna ditt betyg
+
+    private var myReviewSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Ditt betyg")
+                .font(.headline)
+
+            HStack(spacing: 8) {
+                ForEach(1...5, id: \.self) { i in
+                    Button {
+                        viewModel.myRating = i
+                    } label: {
+                        Image(systemName: i <= viewModel.myRating ? "star.fill" : "star")
+                            .font(.title)
+                            .foregroundColor(.yellow)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            TextField("Skriv en kommentar (valfritt)",
+                      text: $viewModel.myComment,
+                      axis: .vertical)
+                .textFieldStyle(.roundedBorder)
+                .lineLimit(3...6)
+
+            if let error = viewModel.submitError {
+                Text(error)
+                    .font(.caption)
+                    .foregroundColor(.red)
+            }
+
+            Button {
+                Task { await viewModel.submitReview() }
+            } label: {
+                HStack {
+                    Spacer()
+                    if viewModel.isSubmitting {
+                        ProgressView()
+                    } else {
+                        Text("Skicka betyg")
+                    }
+                    Spacer()
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!viewModel.canSubmit)
+        }
+        .padding()
+    }
+
+    // MARK: - Recensioner 
+
+    private var reviewsListSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Recensioner")
+                .font(.headline)
+
+            if viewModel.reviews.isEmpty {
+                Text("Inga recensioner ännu.")
+                    .foregroundColor(.secondary)
+            } else {
+                ForEach(viewModel.reviews) { review in
+                    reviewRow(review)
+                    Divider()
+                }
+            }
+        }
+        .padding()
+    }
+
+    private func reviewRow(_ review: Review) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(review.authorName)
+                    .font(.subheadline.bold())
+                Spacer()
+                Text(review.createdAt, style: .date)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            starsDisplay(filledFor: Double(review.rating))
+            if !review.comment.isEmpty {
+                Text(review.comment)
+                    .font(.body)
+                    .padding(.top, 2)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func starsDisplay(filledFor rating: Double) -> some View {
+        HStack(spacing: 2) {
+            ForEach(1...5, id: \.self) { i in
+                Image(systemName: Double(i) <= rating ? "star.fill" : "star")
+                    .foregroundColor(.yellow)
+            }
+        }
     }
 }

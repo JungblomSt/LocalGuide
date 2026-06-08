@@ -16,10 +16,24 @@ import FirebaseAuth
 @Observable
 class AddGuideViewModel {
     private let auth: AuthService
+    private let existingGuide: Guide?
     
-    init(auth: AuthService){
+    init(auth: AuthService, guideToEdit: Guide? = nil){
         self.auth = auth
+        self.existingGuide = guideToEdit
+        
+        if let guide = guideToEdit {
+            self.title = guide.title
+            self.city = guide.city
+            self.description = guide.description
+            self.category = Category(rawValue: guide.category) ?? .other
+            self.tempLocation = guide.coordinates
+            self.imageURL = guide.imageURL
+            self.audioURL = guide.audioURL
+        }
     }
+    
+    var isEditing: Bool { existingGuide != nil }
     
     var title: String = ""
     var city: String = ""
@@ -55,8 +69,8 @@ class AddGuideViewModel {
     func uploadAudio(_ localURL: URL) async {
         isUploadingAudio = true
         do {
-            let url = try await StorageService.shared.saveAudioAndGetURL(localURL: localURL)
-            audioURL = url
+            let (path, _) = try await StorageService.shared.saveAudio(localURL: localURL)
+            audioURL = path
         } catch {
             print("Fel vid ljuduppladdning: \(error.localizedDescription)")
         }
@@ -82,23 +96,41 @@ class AddGuideViewModel {
         guard let location = tempLocation else { return }
         guard let uid = auth.currentUser?.uid else { return }
         
-        let newGuide = Guide(
-            id: UUID().uuidString,
-            title: title.trimmingCharacters(in: .whitespaces),
-            city: city.trimmingCharacters(in: .whitespaces),
-            category: category.rawValue,
-            description: description,
-            longitude: location.longitude,
-            latitude: location.latitude,
-            image: imageURL,
-            audioURL: audioURL,
-            createdBy: uid
-        )
-        
-        try await GuideService.shared.uploadGuide(guide: newGuide)
-        
-        reset()
+        if let existing = existingGuide {
+            let updated = Guide(
+                id: existing.id.uuidString,
+                title: title.trimmingCharacters(in: .whitespaces),
+                city: city.trimmingCharacters(in: .whitespaces),
+                category: category.rawValue,
+                description: description,
+                longitude: location.longitude,
+                latitude: location.latitude,
+                image: imageURL,
+                audioURL: audioURL,
+                createdBy: uid
+            )
+            try await GuideService.shared.updateGuide(guide: updated)
+            
+        } else {
+            let newGuide = Guide(
+                id: UUID().uuidString,
+                title: title.trimmingCharacters(in: .whitespaces),
+                city: city.trimmingCharacters(in: .whitespaces),
+                category: category.rawValue,
+                description: description,
+                longitude: location.longitude,
+                latitude: location.latitude,
+                image: imageURL,
+                audioURL: audioURL,
+                createdBy: uid
+            )
+            
+            try await GuideService.shared.uploadGuide(guide: newGuide)
+            
+            reset()
+        }
     }
+        
     
     func reset() {
         title = ""

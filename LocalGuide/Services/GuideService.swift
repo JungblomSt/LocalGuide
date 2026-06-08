@@ -20,6 +20,7 @@ final class GuideService {
         guidesCollection.document(guideId)
     }
 
+    /// Laddar upp en ny guide till firestore
     func uploadGuide(guide: Guide) async throws {
         try guideDocument(guideId: guide.id.uuidString).setData(
             from: guide,
@@ -27,9 +28,24 @@ final class GuideService {
         )
     }
     
+    /// Uppdaterar guiden som redan finns på firestore
+    func updateGuide(guide: Guide) async throws {
+        try guideDocument(guideId: guide.id.uuidString).setData(
+            from: guide,
+            merge: true
+        )
+    }
+    
+    /// Hämtar samtliga guider
     func fetchGuides() async throws -> [Guide] {
         let snapshot = try await guidesCollection.getDocuments()
         return try snapshot.documents.map { try $0.data(as: Guide.self) }
+    }
+    
+    /// Hämtar en enskild Guide
+    func fetchGuide(id: String) async throws -> Guide {
+        let snapshot = try await guideDocument(guideId: id).getDocument()
+        return try snapshot.data(as: Guide.self)
     }
 
     /// Fetches guides created by a specific user.

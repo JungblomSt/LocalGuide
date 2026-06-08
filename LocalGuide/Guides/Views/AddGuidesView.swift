@@ -13,9 +13,9 @@ struct AddGuidesView: View {
 
     @State private var viewModel: AddGuideViewModel
     
-    init(auth: AuthService) {
+    init(auth: AuthService, guideToEdit: Guide? = nil) {
         _viewModel = State(
-            initialValue: AddGuideViewModel(auth: auth)
+            initialValue: AddGuideViewModel(auth: auth, guideToEdit: guideToEdit)
         )
     }
     
@@ -32,6 +32,8 @@ struct AddGuidesView: View {
     @State private var selectedAudioURL: URL? = nil
     @State private var showAudioPicker: Bool = false
 
+    @Environment(\.dismiss) private var dismiss
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -48,7 +50,7 @@ struct AddGuidesView: View {
                 }
                 .scrollDismissesKeyboard(.interactively)
 
-                .navigationTitle(Text("Dela en guidning"))
+                .navigationTitle(viewModel.isEditing ? "Redigera" : "Lägg till")
                 .navigationBarTitleDisplayMode(.inline)
                 .sheet(isPresented: $showMapPicker) {
                     MapLocationPickerView(selectedLocation: $viewModel.tempLocation)
@@ -274,12 +276,18 @@ struct AddGuidesView: View {
 
                         // Spara guiden
                         try await viewModel.saveGuide()
-                        viewModel.reset()
-                        tempImage = nil
-                        selectedItem = nil
-                        selectedAudioURL = nil
-                        capturedImage = nil
-                        showPublishedAlert = true
+                        
+                        if viewModel.isEditing {
+                            dismiss()
+                        } else {
+                            viewModel.reset()
+                            tempImage = nil
+                            selectedItem = nil
+                            selectedAudioURL = nil
+                            capturedImage = nil
+                            showPublishedAlert = true
+                        }
+
                     }
                 }
             } label: {
@@ -290,7 +298,7 @@ struct AddGuidesView: View {
                             .progressViewStyle(.circular)
                         Text("Publicerar...")
                     } else {
-                        Text("Publisera")
+                        Text(viewModel.isEditing ? "Spara ändringar" : "Publisera")
                     }
                     Spacer()
                 }

@@ -27,14 +27,38 @@ class AudioPlayerManager {
     func play(url: URL) {
         do {
             player = try AVAudioPlayer(contentsOf: url)
-            player?.play()
-            duration = player?.duration ?? 0
-            currentTime = 0
-            isPlaying = true
-            startTimer()
+            startPlayback()
         } catch {
             print("AudioPlayerManager: failed to play \(url): \(error)")
         }
+    }
+
+    /// Spelar upp ljud direkt från data,  nedladdat från Firebase Storage
+    func play(data: Data) {
+        do {
+            player = try AVAudioPlayer(data: data)
+            startPlayback()
+        } catch {
+            print("AudioPlayerManager: failed to play audio data: \(error)")
+        }
+    }
+
+    /// Hämtar ljuddata från Firebase Storage via StorageService (med disk-cache)
+    func play(storagePath path: String) async {
+        do {
+            let data = try await StorageService.shared.cachedAudioData(path: path)
+            await MainActor.run { play(data: data) }
+        } catch {
+            print("AudioPlayerManager: failed to load audio at \(path): \(error)")
+        }
+    }
+
+    private func startPlayback() {
+        player?.play()
+        duration = player?.duration ?? 0
+        currentTime = 0
+        isPlaying = true
+        startTimer()
     }
 
     func pause() {
