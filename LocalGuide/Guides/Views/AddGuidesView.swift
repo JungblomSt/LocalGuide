@@ -32,6 +32,8 @@ struct AddGuidesView: View {
     @State private var selectedAudioURL: URL? = nil
     @State private var showAudioPicker: Bool = false
 
+    @State private var showRecordingSheet: Bool = false
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -58,6 +60,9 @@ struct AddGuidesView: View {
                         capturedImage = image
                         Task { await viewModel.uploadImage(image) }
                     }
+                }
+                .sheet(isPresented: $showRecordingSheet) {
+                    RecordingView()
                 }
             }
         }
@@ -203,6 +208,16 @@ struct AddGuidesView: View {
                 HStack {
                     Image(systemName: "folder.fill")
                     Text("Välj en ljudfil")
+                }
+                .frame(maxWidth: .infinity)
+            }
+
+            Button {
+                showRecordingSheet = true
+            } label: {
+                HStack {
+                    Image(systemName: "mic.fill")
+                    Text("Spela in ljud")
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -369,5 +384,3 @@ struct MapLocationPickerView: View {
     AddGuidesView(auth: AuthService())
 }
 
-// MARK: Recording
-// button to open .sheet for recording
