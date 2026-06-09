@@ -34,6 +34,7 @@ final class AudioRecorderManager {
         guard await requestPermission() else { return }
         do{
             let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playAndRecord, mode: .default)
             try session.setActive(true)
             
             let dir = try FileManager.default
