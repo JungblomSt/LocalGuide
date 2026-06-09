@@ -13,6 +13,7 @@ final class AudioRecorderManager {
     private var recorder: AVAudioRecorder?
     
     var isRecording = false
+    var isPaused = false
     private var timer: Timer?
     var currentlyTime: TimeInterval = 0
     
@@ -69,6 +70,29 @@ final class AudioRecorderManager {
     
     func stop(){
         
+    }
+    
+    func pause(){
+        
+    }
+    
+    func resume(){
+        
+    }
+    
+    func reset(){
+        stopTimer()
+        recorder?.stop()
+        if let fileURL {
+            try? FileManager.default.removeItem(at: fileURL)
+        }
+        recorder = nil
+        fileURL = nil
+        recordingURL = nil
+        isRecording = false
+        isPaused = false
+        currentlyTime = 0
+        try? AVAudioSession.sharedInstance().setActive(false)
     }
     
     private func startTimer() {
