@@ -62,7 +62,9 @@ struct AddGuidesView: View {
                     }
                 }
                 .sheet(isPresented: $showRecordingSheet) {
-                    RecordingView()
+                    RecordingView { url in
+                        selectedAudioURL = url
+                    }
                 }
             }
         }
