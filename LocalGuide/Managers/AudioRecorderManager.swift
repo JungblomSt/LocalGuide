@@ -18,6 +18,7 @@ final class AudioRecorderManager {
     
     // url to last recording
     private(set) var recordingURL: URL?
+    private(set) fileURL: URL?
     
     // function for asking permission
     private func requestPermission() async -> Bool {
@@ -35,7 +36,7 @@ final class AudioRecorderManager {
             
             let dir = try FileManager.default
                 .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFOR: nil, create: true)
-                .appendingPathComponent("Recordings", isDirectoy: true)
+                .appendingPathComponent("Recordings", isDirectory: true)
                 
             try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
             
