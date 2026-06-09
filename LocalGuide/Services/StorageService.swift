@@ -73,7 +73,7 @@ final class StorageService {
 
     /// Hämtar ljuddata med disk-cache: laddar bara ner från Firebase första gången.
     func cachedAudioData(path: String) async throws -> Data {
-        // Gör om lagringsvägen till ett säkert filnamn (guide_audio/<uuid>.mp3 > guide_audio_<uuid>.mp3)
+        // Gör om lagringsvägen till ett säkert filnamn (guide_audio/<uuid>.m4a > guide_audio_<uuid>.m4a)
         let fileURL = audioCacheDirectory.appendingPathComponent(path.replacingOccurrences(of: "/", with: "_"))
 
         // Cache-träff: returnera direkt, ingen nedladdning
@@ -97,9 +97,9 @@ final class StorageService {
 
     func saveGuideAudio(data: Data) async throws -> (Path: String, Name: String) {
         let meta = StorageMetadata()
-        meta.contentType = "audio/mpeg"
+        meta.contentType = "audio/mp4"
 
-        let path = "\(UUID().uuidString).mp3"
+        let path = "\(UUID().uuidString).m4a"
 
         let returnedMetaData = try await guideAudioReference.child(path).putDataAsync(data, metadata: meta)
 
