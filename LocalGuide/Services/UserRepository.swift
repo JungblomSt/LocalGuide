@@ -5,8 +5,10 @@
 //  Created by neda khalajnejad on 2026-05-26.
 //
 
+import Observation
 import FirebaseFirestore
 
+@Observable
 final class UserRepository {
     private let collection = Firestore.firestore().collection("users")
 
@@ -41,6 +43,39 @@ final class UserRepository {
         try await collection.document(uid).updateData([
             "bio": bio
         ])
+    }
+    
+    /// Saves a guide id to the user's saved guides collection.
+    func saveGuide(uid: String, guideId: String) async throws {
+        try await collection
+            .document(uid)
+            .collection("savedGuides")
+            .document(guideId)
+            .setData([
+                "guideId": guideId,
+                "savedAt": Date()
+            ])
+    }
+
+    /// Removes a guide id from the user's saved guides collection.
+    func removeSavedGuide(uid: String, guideId: String) async throws {
+        try await collection
+            .document(uid)
+            .collection("savedGuides")
+            .document(guideId)
+            .delete()
+    }
+
+    /// Fetches all saved guide ids for a user.
+    func fetchSavedGuideIds(uid: String) async throws -> [String] {
+        let snapshot = try await collection
+            .document(uid)
+            .collection("savedGuides")
+            .getDocuments()
+
+        return snapshot.documents.compactMap { document in
+            document.data()["guideId"] as? String
+        }
     }
 }
 
