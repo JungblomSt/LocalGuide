@@ -31,8 +31,10 @@ final class AudioRecorderManager {
     
     // function to record
     func start() async {
+        guard await requestPermission() else { return }
         do{
             let session = AVAudioSession.sharedInstance()
+            try session.setActive(true)
             
             let dir = try FileManager.default
                 .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
