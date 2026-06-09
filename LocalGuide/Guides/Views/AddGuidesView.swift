@@ -68,6 +68,14 @@ struct AddGuidesView: View {
                         selectedAudioURL = url
                     }
                 }
+                .onChange(of: selectedAudioURL) { oldValue, _ in
+                    // a recording that was replaced or cleared is no longer needed
+                    if let oldValue { AudioRecorderManager.deleteRecording(at: oldValue) }
+                }
+                .onDisappear {
+                    // form dismissed unsaved → don't leave the recording behind
+                    if let url = selectedAudioURL { AudioRecorderManager.deleteRecording(at: url) }
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RecordingView: View {
     @State private var viewModel = RecordingViewModel()
+    @State private var didUseRecording = false
     @Environment(\.dismiss) private var dismiss
 
     var onUse: ((URL) -> Void)? = nil
@@ -37,19 +38,23 @@ struct RecordingView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Avbryt") {
-                        viewModel.reset()
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Använd") {
                         if let url = viewModel.recordingURL {
+                            didUseRecording = true
                             onUse?(url)
                         }
                         dismiss()
                     }
                     .disabled(!viewModel.hasRecording)
                 }
+            }
+            .onDisappear {
+                // dismissed (incl. swipe-down) without using the take → clean up
+                if !didUseRecording { viewModel.reset() }
             }
         }
     }

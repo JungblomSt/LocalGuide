@@ -106,6 +106,13 @@ final class AudioRecorderManager {
         currentlyTime = 0
         try? AVAudioSession.sharedInstance().setActive(false)
     }
+
+    /// Deletes a recording this manager created. URLs outside our Recordings
+    /// folder (e.g. files picked from the Files app) are ignored.
+    static func deleteRecording(at url: URL) {
+        guard url.deletingLastPathComponent().lastPathComponent == "Recordings" else { return }
+        try? FileManager.default.removeItem(at: url)
+    }
     
     private func startTimer() {
         stopTimer()
