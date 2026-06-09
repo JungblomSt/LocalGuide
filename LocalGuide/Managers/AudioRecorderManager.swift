@@ -69,7 +69,13 @@ final class AudioRecorderManager {
     }
     
     func stop(){
-        
+        guard isRecording else { return }
+        stopTimer()
+        recorder?.stop()
+        recordingURL = fileURL
+        isRecording = false
+        isPaused = false
+        try? AVAudioSession.sharedInstance().setActive(false)
     }
     
     func pause(){
