@@ -10,7 +10,7 @@ import Observation
 
 @Observable
 final class AudioRecorderManager {
-    private var recorder: AVAudioRecorder
+    private var recorder: AVAudioRecorder?
     
     var isRecording = false
     private var timer: Timer?
@@ -18,7 +18,7 @@ final class AudioRecorderManager {
     
     // url to last recording
     private(set) var recordingURL: URL?
-    private(set) fileURL: URL?
+    private(set) var fileURL: URL?
     
     // function for asking permission
     private func requestPermission() async -> Bool {
@@ -30,12 +30,12 @@ final class AudioRecorderManager {
     }
     
     // function to record
-    func start(){
+    func start() async {
         do{
             let session = AVAudioSession.sharedInstance()
             
             let dir = try FileManager.default
-                .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFOR: nil, create: true)
+                .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
                 .appendingPathComponent("Recordings", isDirectory: true)
                 
             try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
@@ -45,6 +45,8 @@ final class AudioRecorderManager {
             fileURL = url
             
             
+        } catch {
+            print("Could not start recording: \(error)")
         }
     }
     
