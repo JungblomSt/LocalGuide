@@ -10,6 +10,7 @@ import UIKit
 
 struct ProfileSettingsView: View {
     let auth: AuthService
+    @State private var showDeleteAccountConfirmation = false
 
     
     var body: some View {
@@ -34,9 +35,27 @@ struct ProfileSettingsView: View {
                 } label: {
                     Label("Logga ut", systemImage: "rectangle.portrait.and.arrow.right")
                 }
+                
+                Button(role: .destructive) {
+                    showDeleteAccountConfirmation = true
+                } label: {
+                    Label("Ta bort konto", systemImage: "trash")
+                }
             }
         }
         .navigationTitle("Inställningar")
+        .alert(
+            "Är du säker på att du vill ta bort ditt konto?",
+            isPresented: $showDeleteAccountConfirmation
+        ) {
+            Button("Ta bort konto", role: .destructive) {
+                // Account deletion will be connected in the next step.
+            }
+            
+            Button("Avbryt", role: .cancel) { }
+        } message: {
+            Text("Det här går inte att ångra.")
+        }
     }
 }
 
