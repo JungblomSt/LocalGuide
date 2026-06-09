@@ -9,7 +9,7 @@ import AVFoundation
 import Observation
 
 @Observable
-class AudioPlayerManager {
+final class AudioPlayerManager {
     private var player: AVAudioPlayer?
     private var timer: Timer?
 
