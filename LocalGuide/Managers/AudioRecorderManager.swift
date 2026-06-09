@@ -44,6 +44,20 @@ final class AudioRecorderManager {
             let url = dir.appendingPathComponent("\(stamp).m4a")
             fileURL = url
             
+            // AAC in an .m4a container
+            let settings: [String: Any] = [
+                AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+                AVSampleRateKey: 44_100,
+                AVNumberOfChannelsKey: 1,
+                AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+            ]
+            
+            recorder = try AVAudioRecorder(url: url, settings: settings)
+            recorder?.record()
+            
+            isRecording = true
+            currentlyTime = 0
+            startTimer()
             
         } catch {
             print("Could not start recording: \(error)")
