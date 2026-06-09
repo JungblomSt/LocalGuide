@@ -19,12 +19,8 @@ final class AudioRecorderManager {
     // url to last recording
     private(set) var recordingURL: URL?
     
-    init(recorder: AVAudioRecorder) {
-        self.recorder = recorder
-    }
-    
     // function for asking permission
-    private func RequestPermission() async -> Bool {
+    private func requestPermission() async -> Bool {
         await withCheckedContinuation { continuation in
             AVAudioApplication.requestRecordPermission { granted in
                 continuation.resume(returning: granted)
@@ -33,6 +29,27 @@ final class AudioRecorderManager {
     }
     
     // function to record
+    func start(){
+        do{
+            let session = AVAudioSession.sharedInstance()
+            
+            let dir = try FileManager.default
+                .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFOR: nil, create: true)
+                .appendingPathComponent("Recordings", isDirectoy: true)
+                
+            try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+            
+            let stamp = ISO8601DateFormatter().string(from: .now).replacingOccurrences(of: ":", with: "-")
+            let url = dir.appendingPathComponent("\(stamp).m4a")
+            fileURL = url
+            
+            
+        }
+    }
+    
+    func stop(){
+        
+    }
     
     private func startTimer() {
         stopTimer()
