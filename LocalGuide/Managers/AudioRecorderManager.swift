@@ -79,7 +79,10 @@ final class AudioRecorderManager {
     }
     
     func pause(){
-        
+        guard isRecording, !isPaused else { return }
+        recorder?.pause()
+        isPaused = true
+        stopTimer()
     }
     
     func resume(){
