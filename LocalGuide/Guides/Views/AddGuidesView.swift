@@ -371,10 +371,3 @@ struct MapLocationPickerView: View {
 
 // MARK: Recording
 // button to open .sheet for recording
-
-//info view showing recording
-// time of current record
-
-// stop, continy, reset buttons
-
-//button to add selected recording to upload.
