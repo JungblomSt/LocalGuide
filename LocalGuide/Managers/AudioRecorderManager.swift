@@ -72,7 +72,12 @@ final class AudioRecorderManager {
     
     private func startTimer() {
         stopTimer()
+        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            guard let self, let recorder = self.recorder else { return }
+            self.currentlyTime = recorder.currentTime
+        }
     }
+    
     private func stopTimer() {
         timer?.invalidate()
         timer = nil
