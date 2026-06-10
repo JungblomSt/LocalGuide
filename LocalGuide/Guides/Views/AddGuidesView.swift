@@ -33,7 +33,6 @@ struct AddGuidesView: View {
     @State private var showAudioPicker: Bool = false
 
     @State private var showRecordingSheet: Bool = false
-  // accept both
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {

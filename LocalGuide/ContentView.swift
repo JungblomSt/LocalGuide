@@ -11,7 +11,6 @@ import FirebaseAuth
 
 struct ContentView: View {
     @State private var selectedTab = 0
-    @State private var audioPlayer = AudioPlayerManager()
     @State private var auth = AuthService()
     @State private var userRepository = UserRepository()
 
@@ -41,13 +40,6 @@ struct ContentView: View {
         }
         .environment(auth)
         .environment(userRepository)
-        .onChange(of: selectedTab) {
-            if Int.random(in: 1...1000) == 1,
-               let url = Bundle.main.url(forResource: "lsw3_07", withExtension: "mp3") {
-                audioPlayer.play(url: url)
-
-            }
-        }
     }
 }
 
