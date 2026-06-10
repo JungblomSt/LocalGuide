@@ -15,7 +15,9 @@ struct SharedGuidesView: View {
             NavigationLink {
                 GuideDetailView(guide: guide)
                     .onDisappear {
-                        viewModel.loadSharedGuides()
+                        Task {
+                            await viewModel.loadSharedGuides()
+                        }
                     }
             } label: {
                 VStack(alignment: .leading, spacing: 4) {

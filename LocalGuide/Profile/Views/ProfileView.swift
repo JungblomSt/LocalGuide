@@ -56,7 +56,7 @@ struct ProfileView: View {
 
                 VStack(spacing: 12) {
                     NavigationLink {
-                        SavedGuidesView(guides: viewModel.savedGuides)
+                        SavedGuidesView(viewModel: viewModel)
                     } label: {
                         profileRow(
                             title: "Sparade guider",
@@ -102,7 +102,7 @@ struct ProfileView: View {
             Task {
                 await viewModel.loadProfile()
                 await viewModel.loadSavedGuides()
-                viewModel.loadSharedGuides()
+                await viewModel.loadSharedGuides()
             }
         }
     }
