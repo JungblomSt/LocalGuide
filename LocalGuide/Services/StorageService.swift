@@ -134,12 +134,25 @@ final class StorageService {
     
     /// Tar bort en fil från Firebase Storage givet en download URL
     func deleteStorageFile(at downloadURL: String) async throws {
-        guard let url = URL(string: downloadURL),
-              let encodedPath = url.pathComponents.dropFirst(5).first,
-              let path = encodedPath.removingPercentEncoding else { throw URLError(.badURL)  }
+        let ref: StorageReference
         
-        // path blir t.ex. "guide_images/5DFB44BB-....jpg"
-        let ref = Storage.storage().reference().child(path)
-        try await ref.delete()
+        if downloadURL.hasPrefix("http") {
+            // Full download URL — parsa ut path
+            guard let url = URL(string: downloadURL),
+                  let encodedPath = url.pathComponents.dropFirst(5).first,
+                  let path = encodedPath.removingPercentEncoding else { throw URLError(.badURL) }
+            ref = Storage.storage().reference().child(path)
+        } else {
+            // Redan en storage path
+            ref = Storage.storage().reference().child(downloadURL)
+        }
+        
+        do {
+            try await ref.delete()
+        } catch let error as NSError {
+            if error.domain == StorageErrorDomain,
+               error.code == StorageErrorCode.objectNotFound.rawValue { return }
+            throw error
+        }
     }
 }
