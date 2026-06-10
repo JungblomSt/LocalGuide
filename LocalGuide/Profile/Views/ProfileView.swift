@@ -9,10 +9,12 @@ import SwiftUI
 
 struct ProfileView: View {
     private let auth: AuthService
+    private let userRepository: UserRepository
     @State private var viewModel: ProfileViewModel
 
     init(auth: AuthService, userRepository: UserRepository) {
         self.auth = auth
+        self.userRepository = userRepository
         _viewModel = State(
             initialValue: ProfileViewModel(
                 auth: auth,
@@ -90,7 +92,10 @@ struct ProfileView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
-                        ProfileSettingsView(auth: auth)
+                        ProfileSettingsView(
+                            auth: auth,
+                            userRepository: userRepository
+                        )
                     } label: {
                         Image(systemName: "gearshape")
                     }

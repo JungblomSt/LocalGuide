@@ -9,7 +9,18 @@ import SwiftUI
 import UIKit
 
 struct ProfileSettingsView: View {
-    let auth: AuthService
+    @State private var viewModel: ProfileSettingsViewModel
+    @State private var showDeleteAccountConfirmation = false
+    @State private var deleteAccountPassword = ""
+
+    init(auth: AuthService, userRepository: UserRepository) {
+        _viewModel = State(
+            initialValue: ProfileSettingsViewModel(
+                auth: auth,
+                userRepository: userRepository
+            )
+        )
+    }
 
     
     var body: some View {
@@ -26,22 +37,46 @@ struct ProfileSettingsView: View {
 
             Section("Konto") {
                 Button(role: .destructive) {
-                    do {
-                        try auth.signOut()
-                    } catch {
-                        print("Could not sign out: \(error.localizedDescription)")
-                    }
+                    viewModel.signOut()
                 } label: {
                     Label("Logga ut", systemImage: "rectangle.portrait.and.arrow.right")
+                }
+                
+                Button(role: .destructive) {
+                    showDeleteAccountConfirmation = true
+                } label: {
+                    Label("Ta bort konto", systemImage: "trash")
                 }
             }
         }
         .navigationTitle("Inställningar")
+        .alert(
+            "Är du säker på att du vill ta bort ditt konto?",
+            isPresented: $showDeleteAccountConfirmation
+        ) {
+            SecureField("Lösenord", text: $deleteAccountPassword)
+            
+            Button("Ta bort konto", role: .destructive) {
+                Task {
+                    await viewModel.deleteAccount(password: deleteAccountPassword)
+                    deleteAccountPassword = ""
+                }
+            }
+            
+            Button("Avbryt", role: .cancel) {
+                deleteAccountPassword = ""
+            }
+        } message: {
+            Text("Det här går inte att ångra.")
+        }
     }
 }
 
 #Preview {
     NavigationStack {
-        ProfileSettingsView(auth: AuthService())
+        ProfileSettingsView(
+            auth: AuthService(),
+            userRepository: UserRepository()
+        )
     }
 }

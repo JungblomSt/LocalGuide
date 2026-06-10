@@ -45,7 +45,7 @@ final class UserRepository {
         ])
     }
     
-    /// Saves a guide id to the user's saved guides collection.
+    /// Saves a guide id to the user's saved guides collection
     func saveGuide(uid: String, guideId: String) async throws {
         try await collection
             .document(uid)
@@ -57,7 +57,7 @@ final class UserRepository {
             ])
     }
 
-    /// Removes a guide id from the user's saved guides collection.
+    /// Removes a guide id from the user's saved guides collection
     func removeSavedGuide(uid: String, guideId: String) async throws {
         try await collection
             .document(uid)
@@ -66,7 +66,7 @@ final class UserRepository {
             .delete()
     }
 
-    /// Fetches all saved guide ids for a user.
+    /// Fetches all saved guide ids for a user
     func fetchSavedGuideIds(uid: String) async throws -> [String] {
         let snapshot = try await collection
             .document(uid)
@@ -76,6 +76,28 @@ final class UserRepository {
         return snapshot.documents.compactMap { document in
             document.data()["guideId"] as? String
         }
+    }
+    
+    /// Deletes all saved guide references for a user
+    func deleteSavedGuides(uid: String) async throws {
+        let snapshot = try await collection
+            .document(uid)
+            .collection("savedGuides")
+            .getDocuments()
+        
+        let batch = Firestore.firestore().batch()
+        
+        for document in snapshot.documents {
+            batch.deleteDocument(document.reference)
+        }
+        
+        try await batch.commit()
+    }
+    
+    /// Deletes the user's Firestore profile data
+    func deleteUserData(uid: String) async throws {
+        try await deleteSavedGuides(uid: uid)
+        try await collection.document(uid).delete()
     }
 }
 

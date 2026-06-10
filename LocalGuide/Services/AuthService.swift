@@ -38,4 +38,20 @@ final class AuthService {
     func signOut() throws {
         try Auth.auth().signOut()
     }
+    
+    func reauthenticate(password: String) async throws {
+        guard let user = currentUser,
+              let email = user.email else { return }
+        
+        let credential = EmailAuthProvider.credential(
+            withEmail: email,
+            password: password
+        )
+        
+        _ = try await user.reauthenticate(with: credential)
+    }
+    
+    func deleteAccount() async throws {
+        try await currentUser?.delete()
+    }
 }
