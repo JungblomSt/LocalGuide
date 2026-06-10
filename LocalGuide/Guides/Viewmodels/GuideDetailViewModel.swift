@@ -6,7 +6,7 @@ class GuideDetailViewModel {
     private let audioPlayer = AudioPlayerManager()
     var guide: Guide
 
-    var isSaved = false
+//    var isSaved = false
     // MARK: - Audio
     /// True medan ljudet laddas ner från Firebase Storage första gången
     var isLoadingAudio = false
@@ -37,9 +37,9 @@ class GuideDetailViewModel {
         self.guide = guide
     }
     
-    func toggleSaved() {
-        isSaved.toggle()
-    }
+//    func toggleSaved() {
+//        isSaved.toggle()
+//    }
     
     /// Uppdatera lokal data med uppdaterad guide från firestore
     func refresh() async {
@@ -49,6 +49,16 @@ class GuideDetailViewModel {
             print("Fel vid hämtning av guide: \(error)")
         }
     }
+    
+    func deleteGuide() async {
+        do {
+            try await GuideService.shared.deleteGuide(guide)
+        } catch {
+            print("Fel vid borttagning av guide: \(error)")
+        }
+    }
+    
+    // MARK: Audio
     
     func toggleAudio() {
         if audioPlayer.isPlaying {

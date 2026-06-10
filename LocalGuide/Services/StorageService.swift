@@ -113,5 +113,16 @@ final class StorageService {
         let data = try Data(contentsOf: localURL)
         return try await saveGuideAudio(data: data)
     }
+    
+    /// Tar bort en fil från Firebase Storage givet en download URL
+    func deleteStorageFile(at downloadURL: String) async throws {
+        guard let url = URL(string: downloadURL),
+              let encodedPath = url.pathComponents.dropFirst(5).first,
+              let path = encodedPath.removingPercentEncoding else { throw URLError(.badURL)  }
+        
+        // path blir t.ex. "guide_images/5DFB44BB-....jpg"
+        let ref = Storage.storage().reference().child(path)
+        try await ref.delete()
+    }
 }
 

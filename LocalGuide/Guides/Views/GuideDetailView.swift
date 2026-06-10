@@ -16,10 +16,13 @@ struct GuideDetailView: View {
     @Environment(AuthService.self) private var authService
     @Environment(UserRepository.self) private var userRepository
     
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var viewModel: GuideDetailViewModel
     @State private var favoritesViewModel: FavoritesViewModel?
     
     @State private var needsUppdate = false
+    @State private var showDeleteAlert = false
     
     init(guide: Guide) {
         _viewModel = State(initialValue: GuideDetailViewModel(guide: guide))
@@ -48,6 +51,28 @@ struct GuideDetailView: View {
         .scrollDismissesKeyboard(.interactively)
         .task { await viewModel.loadReviews() }
         .toolbar {
+            // Delete Guide
+            if authService.currentUser?.uid == viewModel.guide.createdBy {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(role: .destructive) {
+                        showDeleteAlert = true
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .alert("Ta bort guide?", isPresented: $showDeleteAlert) {
+                        Button("Ta bort", role: .destructive) {
+                            Task {
+                                await viewModel.deleteGuide()
+                                dismiss()
+                            }
+                        }
+                        Button("Avbryt", role: .cancel) {}
+                    } message: {
+                        Text("Guiden och allt innehåll tas bort permanent.")
+                    }
+                }
+            }
+            
             // Edit Guide
             if authService.currentUser?.uid == viewModel.guide.createdBy {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -104,6 +129,7 @@ struct GuideDetailView: View {
     NavigationStack {
         GuideDetailView(guide: Guide.sampleData[0])
             .environment(AuthService())
+            .environment(UserRepository())
     }
 }
 
