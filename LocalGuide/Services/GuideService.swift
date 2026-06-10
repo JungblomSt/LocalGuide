@@ -49,42 +49,35 @@ final class GuideService {
         return try snapshot.data(as: Guide.self)
     }
 
-    /// Fetches guides created by a specific user.
+    /// Fetches guides created by a specific user using a completion handler.
+    /// Kept for older code that still uses callback-based loading.
     func fetchGuidesCreatedByUser(
         createdBy uid: String,
         completion: @escaping ([Guide]) -> Void
     ) {
-        guidesCollection
-            .whereField("createdBy", isEqualTo: uid)
-            .getDocuments { querySnapshot, error in
-                if let error = error {
-                    print("Error getting user guides: \(error)")
-                    completion([])
-                    return
-                }
-
-                Task { @MainActor in
-                    var guides: [Guide] = []
-
-                    guard let documents = querySnapshot?.documents else {
-                        completion([])
-                        return
-                    }
-
-                    for document in documents {
-                        do {
-                            let guide = try document.data(as: Guide.self)
-                            guides.append(guide)
-                        } catch {
-                            print("Error decoding user guide: \(error)")
-                        }
-                    }
-
-                    completion(guides)
-                }
+        Task {
+            do {
+                let guides = try await fetchGuidesCreatedByUser(createdBy: uid)
+                completion(guides)
+            } catch {
+                print("Error getting user guides: \(error)")
+                completion([])
             }
+        }
     }
     
+    /// Fetches guides created by a specific user using async/await.
+    func fetchGuidesCreatedByUser(createdBy uid: String) async throws -> [Guide] {
+        let snapshot = try await guidesCollection
+            .whereField("createdBy", isEqualTo: uid)
+            .getDocuments()
+        
+        return try snapshot.documents.map { document in
+            try document.data(as: Guide.self)
+        }
+    }
+    
+
     ///  Delete Guide, image and audio from firestore/storage
     func deleteGuide(_ guide: Guide) async throws {
         if let imageURL = guide.imageURL {
@@ -95,6 +88,15 @@ final class GuideService {
         }
         try await Firestore.firestore().collection("guides").document(guide.id.uuidString).delete()
         
+    }
+    
+    /// Deletes all guides created by a specific user
+    func deleteGuidesCreatedByUser(uid: String) async throws {
+        let guides = try await fetchGuidesCreatedByUser(createdBy: uid)
+        
+        for guide in guides {
+            try await deleteGuide(guide)
+        }
     }
 
     // Funktion för att ladda upp sample data

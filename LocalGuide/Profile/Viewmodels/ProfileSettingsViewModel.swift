@@ -32,6 +32,7 @@ final class ProfileSettingsViewModel {
 
         do {
             try await auth.reauthenticate(password: password)
+            try await GuideService.shared.deleteGuidesCreatedByUser(uid: uid)
             try await userRepository.deleteUserData(uid: uid)
             try await auth.deleteAccount()
         } catch {
