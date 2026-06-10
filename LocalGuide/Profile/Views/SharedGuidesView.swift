@@ -8,11 +8,17 @@
 import SwiftUI
 
 struct SharedGuidesView: View {
-    let guides: [Guide]
+    let viewModel: ProfileViewModel
+    
     var body: some View {
-        List(guides) { guide in
+        List(viewModel.sharedGuides) { guide in
             NavigationLink {
                 GuideDetailView(guide: guide)
+                    .onDisappear {
+                        Task {
+                            await viewModel.loadSharedGuides()
+                        }
+                    }
             } label: {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(guide.title)
@@ -30,6 +36,9 @@ struct SharedGuidesView: View {
 
 #Preview {
     NavigationStack {
-        SharedGuidesView(guides: Guide.sampleData)
+        SharedGuidesView(viewModel: ProfileViewModel(
+            auth: AuthService(),
+            userRepository: UserRepository()
+        ))
     }
 }

@@ -103,7 +103,7 @@ final class ProfileViewModel {
     }
     
     /// Loads guides created by the current user from Firestore.
-    func loadSharedGuides() {
+    func loadSharedGuides() async {
         guard let uid = auth.currentUser?.uid else {
             errorMessage = "Ingen inloggad användare hittades."
             return

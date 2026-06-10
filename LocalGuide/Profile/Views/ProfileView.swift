@@ -56,7 +56,7 @@ struct ProfileView: View {
 
                 VStack(spacing: 12) {
                     NavigationLink {
-                        SavedGuidesView(guides: viewModel.savedGuides)
+                        SavedGuidesView(viewModel: viewModel)
                     } label: {
                         profileRow(
                             title: "Sparade guider",
@@ -65,7 +65,7 @@ struct ProfileView: View {
                     }
 
                     NavigationLink {
-                        SharedGuidesView(guides: viewModel.sharedGuides)
+                        SharedGuidesView(viewModel: viewModel)
                     } label: {
                         profileRow(
                             title: "Mina delade",
@@ -96,11 +96,13 @@ struct ProfileView: View {
                     }
                 }
             }
-            // Loads the user's profile when the profile screen appears
-            .task {
+        }
+        // Loads the user's profile when the profile screen appears
+        .onAppear {
+            Task {
                 await viewModel.loadProfile()
                 await viewModel.loadSavedGuides()
-                viewModel.loadSharedGuides()
+                await viewModel.loadSharedGuides()
             }
         }
     }

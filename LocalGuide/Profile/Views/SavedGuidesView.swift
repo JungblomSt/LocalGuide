@@ -8,12 +8,17 @@
 import SwiftUI
 
 struct SavedGuidesView: View {
-    let guides: [Guide]
+    let viewModel: ProfileViewModel
 
     var body: some View {
-        List(guides) { guide in
+        List(viewModel.savedGuides) { guide in
             NavigationLink {
                 GuideDetailView(guide: guide)
+                    .onDisappear {
+                        Task {
+                            await viewModel.loadSavedGuides()
+                        }
+                    }
             } label: {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(guide.title)
@@ -32,6 +37,9 @@ struct SavedGuidesView: View {
 
 #Preview {
     NavigationStack {
-        SavedGuidesView(guides: Guide.sampleData)
+        SavedGuidesView(viewModel: ProfileViewModel(
+            auth: AuthService(),
+            userRepository: UserRepository()
+        ))
     }
 }

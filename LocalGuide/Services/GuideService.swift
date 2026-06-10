@@ -7,6 +7,7 @@
 
 import FirebaseFirestore
 import Foundation
+import FirebaseStorage
 
 final class GuideService {
 
@@ -82,6 +83,18 @@ final class GuideService {
                     completion(guides)
                 }
             }
+    }
+    
+    ///  Delete Guide, image and audio from firestore/storage
+    func deleteGuide(_ guide: Guide) async throws {
+        if let imageURL = guide.imageURL {
+            try await StorageService.shared.deleteStorageFile(at: imageURL)
+        }
+        if let audioURL = guide.audioURL {
+            try await StorageService.shared.deleteStorageFile(at: audioURL)
+        }
+        try await Firestore.firestore().collection("guides").document(guide.id.uuidString).delete()
+        
     }
 
     // Funktion för att ladda upp sample data

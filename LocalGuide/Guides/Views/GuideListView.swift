@@ -50,6 +50,11 @@ struct GuideListView: View {
                     List(filteredGuides) { guide in
                         NavigationLink {
                             GuideDetailView(guide: guide)
+                                .onDisappear {
+                                    Task {
+                                        await viewModel.loadGuides()
+                                    }
+                                }
                         } label: {
                             VStack(alignment: .leading) {
                                 HStack {
