@@ -11,6 +11,7 @@ import UIKit
 struct ProfileSettingsView: View {
     @State private var viewModel: ProfileSettingsViewModel
     @State private var showDeleteAccountConfirmation = false
+    @State private var deleteAccountPassword = ""
 
     init(auth: AuthService, userRepository: UserRepository) {
         _viewModel = State(
@@ -53,13 +54,18 @@ struct ProfileSettingsView: View {
             "Är du säker på att du vill ta bort ditt konto?",
             isPresented: $showDeleteAccountConfirmation
         ) {
+            SecureField("Lösenord", text: $deleteAccountPassword)
+            
             Button("Ta bort konto", role: .destructive) {
                 Task {
-                    await viewModel.deleteAccount()
+                    await viewModel.deleteAccount(password: deleteAccountPassword)
+                    deleteAccountPassword = ""
                 }
             }
             
-            Button("Avbryt", role: .cancel) { }
+            Button("Avbryt", role: .cancel) {
+                deleteAccountPassword = ""
+            }
         } message: {
             Text("Det här går inte att ångra.")
         }

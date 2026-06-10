@@ -27,10 +27,11 @@ final class ProfileSettingsViewModel {
         }
     }
 
-    func deleteAccount() async {
+    func deleteAccount(password: String) async {
         guard let uid = auth.currentUser?.uid else { return }
 
         do {
+            try await auth.reauthenticate(password: password)
             try await userRepository.deleteUserData(uid: uid)
             try await auth.deleteAccount()
         } catch {
