@@ -32,6 +32,7 @@ struct AddGuidesView: View {
     @State private var selectedAudioURL: URL? = nil
     @State private var showAudioPicker: Bool = false
 
+    @State private var showRecordingSheet: Bool = false
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -60,6 +61,19 @@ struct AddGuidesView: View {
                         capturedImage = image
                         Task { await viewModel.uploadImage(image) }
                     }
+                }
+                .sheet(isPresented: $showRecordingSheet) {
+                    RecordingView { url in
+                        selectedAudioURL = url
+                    }
+                }
+                .onChange(of: selectedAudioURL) { oldValue, _ in
+                    // a recording that was replaced or cleared is no longer needed
+                    if let oldValue { AudioRecorderManager.deleteRecording(at: oldValue) }
+                }
+                .onDisappear {
+                    // form dismissed unsaved → don't leave the recording behind
+                    if let url = selectedAudioURL { AudioRecorderManager.deleteRecording(at: url) }
                 }
             }
         }
@@ -205,6 +219,16 @@ struct AddGuidesView: View {
                 HStack {
                     Image(systemName: "folder.fill")
                     Text("Välj en ljudfil")
+                }
+                .frame(maxWidth: .infinity)
+            }
+
+            Button {
+                showRecordingSheet = true
+            } label: {
+                HStack {
+                    Image(systemName: "mic.fill")
+                    Text("Spela in ljud")
                 }
                 .frame(maxWidth: .infinity)
             }

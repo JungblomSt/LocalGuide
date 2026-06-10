@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseStorage
 import UIKit
+import UniformTypeIdentifiers
 
 final class StorageService {
     static let shared = StorageService()
@@ -73,7 +74,7 @@ final class StorageService {
 
     /// Hämtar ljuddata med disk-cache: laddar bara ner från Firebase första gången.
     func cachedAudioData(path: String) async throws -> Data {
-        // Gör om lagringsvägen till ett säkert filnamn (guide_audio/<uuid>.mp3 > guide_audio_<uuid>.mp3)
+        // Gör om lagringsvägen till ett säkert filnamn (guide_audio/<uuid>.m4a > guide_audio_<uuid>.m4a)
         let fileURL = audioCacheDirectory.appendingPathComponent(path.replacingOccurrences(of: "/", with: "_"))
 
         // Cache-träff: returnera direkt, ingen nedladdning
@@ -95,11 +96,15 @@ final class StorageService {
         return url.absoluteString
     }
 
-    func saveGuideAudio(data: Data) async throws -> (Path: String, Name: String) {
+    func saveGuideAudio(
+        data: Data,
+        fileExtension: String,
+        contentType: String
+    ) async throws -> (Path: String, Name: String) {
         let meta = StorageMetadata()
-        meta.contentType = "audio/mpeg"
+        meta.contentType = contentType
 
-        let path = "\(UUID().uuidString).mp3"
+        let path = "\(UUID().uuidString).\(fileExtension)"
 
         let returnedMetaData = try await guideAudioReference.child(path).putDataAsync(data, metadata: meta)
 
@@ -110,8 +115,20 @@ final class StorageService {
     }
 
     func saveAudio(localURL: URL) async throws -> (Path: String, Name: String) {
+        guard
+            let audioType = UTType(filenameExtension: localURL.pathExtension),
+            audioType.conforms(to: .audio),
+            let fileExtension = audioType.preferredFilenameExtension,
+            let contentType = audioType.preferredMIMEType
+        else {
+            throw URLError(.unsupportedURL)
+        }
+
         let data = try Data(contentsOf: localURL)
-        return try await saveGuideAudio(data: data)
+        return try await saveGuideAudio(
+            data: data,
+            fileExtension: fileExtension,
+            contentType: contentType
+        )
     }
 }
-
