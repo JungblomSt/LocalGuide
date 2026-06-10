@@ -9,8 +9,17 @@ import SwiftUI
 import UIKit
 
 struct ProfileSettingsView: View {
-    let auth: AuthService
+    @State private var viewModel: ProfileSettingsViewModel
     @State private var showDeleteAccountConfirmation = false
+
+    init(auth: AuthService, userRepository: UserRepository) {
+        _viewModel = State(
+            initialValue: ProfileSettingsViewModel(
+                auth: auth,
+                userRepository: userRepository
+            )
+        )
+    }
 
     
     var body: some View {
@@ -27,11 +36,7 @@ struct ProfileSettingsView: View {
 
             Section("Konto") {
                 Button(role: .destructive) {
-                    do {
-                        try auth.signOut()
-                    } catch {
-                        print("Could not sign out: \(error.localizedDescription)")
-                    }
+                    viewModel.signOut()
                 } label: {
                     Label("Logga ut", systemImage: "rectangle.portrait.and.arrow.right")
                 }
@@ -49,7 +54,9 @@ struct ProfileSettingsView: View {
             isPresented: $showDeleteAccountConfirmation
         ) {
             Button("Ta bort konto", role: .destructive) {
-                // Account deletion will be connected in the next step.
+                Task {
+                    await viewModel.deleteAccount()
+                }
             }
             
             Button("Avbryt", role: .cancel) { }
@@ -61,6 +68,9 @@ struct ProfileSettingsView: View {
 
 #Preview {
     NavigationStack {
-        ProfileSettingsView(auth: AuthService())
+        ProfileSettingsView(
+            auth: AuthService(),
+            userRepository: UserRepository()
+        )
     }
 }

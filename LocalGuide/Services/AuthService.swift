@@ -38,4 +38,8 @@ final class AuthService {
     func signOut() throws {
         try Auth.auth().signOut()
     }
+    
+    func deleteAccount() async throws {
+        try await currentUser?.delete()
+    }
 }
