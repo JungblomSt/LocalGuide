@@ -1,4 +1,4 @@
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-06-12 at 11 17 32" src="https://github.com/user-attachments/assets/122d4260-c2d3-44ef-b551-11e4f1e77075" />
+
 
 
 # LocalGuide
