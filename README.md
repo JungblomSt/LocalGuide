@@ -61,4 +61,4 @@ An iOS app that lets users discover and share guided tours of places near them. 
    ```bash
    git clone https://github.com/JungblomSt/LocalGuide.git
    cd LocalGuide
-attachments/assets/fb198b57-7ad1-4255-a1d7-c01ce549113d" />
+
