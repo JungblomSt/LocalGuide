@@ -61,7 +61,4 @@ An iOS app that lets users discover and share guided tours of places near them. 
    ```bash
    git clone https://github.com/JungblomSt/LocalGuide.git
    cd LocalGuide
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-06-12 at 11 19 28" src="https://github.com/user-attachments/assets/5dd04ac1-82b1-4cf7-99b2-cdfc63192dee" />
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-06-12 at 11 19 18" src="https://github.com/user-attachments/assets/18f1dfff-7283-4736-ba42-644c638abbda" />
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-06-12 at 11 17 56" src="https://github.com/user-attachments/assets/6b94f844-9bda-4637-8048-d4dc871474c9" />
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-06-12 at 11 17 48" src="https://github.com/user-attachments/assets/fb198b57-7ad1-4255-a1d7-c01ce549113d" />
+attachments/assets/fb198b57-7ad1-4255-a1d7-c01ce549113d" />
